@@ -67,11 +67,6 @@ func (b *blockchain) AddBlock(from string) *Block {
 	return block
 }
 
-func (b *blockchain) SendInfoOfMining(from string) (*Block, string) {
-	block, hash := userMining(b.NewestHash, b.Height+1, getDifficulty(b), from)
-	return block, hash
-}
-
 // all blocks
 func Blocks(b *blockchain) []*Block {
 	b.m.Lock()
@@ -148,52 +143,6 @@ func Status(b *blockchain, rw http.ResponseWriter) {
 	utils.HandleErr(json.NewEncoder(rw).Encode(b))
 }
 
-// all transactions
-func Txs(b *blockchain) []*Tx {
-	var txs []*Tx
-	for _, block := range Blocks(b) {
-		txs = append(txs, block.Transactions...)
-	}
-	return txs
-}
-
-func GetLatestTransactions(b *blockchain, rw http.ResponseWriter) {
-	txs := Txs(b)
-	if len(txs) > 6 {
-		txs = txs[0:6]
-	}
-	utils.HandleErr(json.NewEncoder(rw).Encode(txs))
-}
-
-func Transactions(b *blockchain, rw http.ResponseWriter) {
-	txs := Txs(b)
-	// if len(txs) > 6 {
-	// 	txs = txs[0:6]
-	// }
-	utils.HandleErr(json.NewEncoder(rw).Encode(txs))
-}
-
-func FindTransactions(b *blockchain, rw http.ResponseWriter, params string) {
-	for _, tx := range Txs(b) {
-		if tx.ID == params {
-			utils.HandleErr(json.NewEncoder(rw).Encode(tx))
-			return
-		}
-	}
-	return
-}
-
-// find specific transaction
-func FindTx(b *blockchain, targetID string) *Tx {
-	// for loop to find
-	for _, tx := range Txs(b) {
-		if tx.ID == targetID {
-			return tx
-		}
-	}
-	return nil
-}
-
 // recalculate difficulty of block by timestamp
 func recalculateDifficulty(b *blockchain) int {
 	// get all blocks
@@ -231,55 +180,6 @@ func getDifficulty(b *blockchain) int {
 	}
 }
 
-// unspent transaction out by address
-func UTxOutsByAddress(address string, b *blockchain) []*UTxOut {
-	var uTxOuts []*UTxOut
-	creatorTxs := make(map[string]bool)
-	// for loop all blocks
-	for _, block := range Blocks(b) {
-		// for loop block transactions
-		for _, tx := range block.Transactions {
-			// for loop transactions input
-			for _, input := range tx.TxIns {
-				// input signature is coinbase and break loop
-				if input.Signature == "COINBASE" {
-					break
-				}
-				// same address with txouts.address
-				if FindTx(b, input.TxID).TxOuts[input.Index].Address == address {
-					creatorTxs[input.TxID] = true
-				}
-			}
-			// for loop transactions output
-			for index, output := range tx.TxOuts {
-				// if output is owned by address
-				if output.Address == address {
-					// if it didn't spent yet
-					if _, ok := creatorTxs[tx.ID]; !ok {
-						uTxOut := &UTxOut{tx.ID, index, output.Amount}
-						// if that transaction doesn't on the mempool append it
-						if !isOnMempool(uTxOut) {
-							uTxOuts = append(uTxOuts, uTxOut)
-						}
-					}
-				}
-			}
-		}
-	}
-
-	return uTxOuts
-}
-
-// get balance of address
-func BalanceByAddress(address string, b *blockchain) int {
-	txOuts := UTxOutsByAddress(address, b)
-	var amount int
-	for _, txOut := range txOuts {
-		amount += txOut.Amount
-	}
-	return amount
-}
-
 func (b *blockchain) Replace(newBlocks []*Block) {
 	b.m.Lock()
 	defer b.m.Unlock()
@@ -296,26 +196,4 @@ func (b *blockchain) Replace(newBlocks []*Block) {
 func (b *blockchain) LockBlockchain() {
 	b.m.Lock()
 	defer b.m.Unlock()
-}
-
-func (b *blockchain) AddPeerBlock(newBlock *Block) {
-	b.m.Lock()
-	m.m.Lock()
-	defer b.m.Unlock()
-	defer m.m.Unlock()
-
-	b.Height += 1
-	b.CurrentDifficulty = newBlock.Difficulty
-	b.NewestHash = newBlock.Hash
-
-	persistBlockchain(b)
-	persistBlock(newBlock)
-
-	// mempool
-	for _, tx := range newBlock.Transactions {
-		_, ok := m.Txs[tx.ID]
-		if ok {
-			delete(m.Txs, tx.ID)
-		}
-	}
 }

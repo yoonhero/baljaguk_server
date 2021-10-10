@@ -85,41 +85,6 @@ func TestBlocks(t *testing.T) {
 	}
 }
 
-func TestFindTx(t *testing.T) {
-	t.Run("Tx not found", func(t *testing.T) {
-		dbStorage = fakeDB{
-			fakeFindBlock: func() []byte {
-				b := &Block{
-					Height:       2,
-					Transactions: []*Tx{},
-				}
-				return utils.ToBytes(b)
-			},
-		}
-		tx := FindTx(&blockchain{NewestHash: "x"}, "test")
-		if tx != nil {
-			t.Error("Tx should be not found.")
-		}
-	})
-	t.Run("Tx should be found", func(t *testing.T) {
-		dbStorage = fakeDB{
-			fakeFindBlock: func() []byte {
-				b := &Block{
-					Height: 2,
-					Transactions: []*Tx{
-						{ID: "test"},
-					},
-				}
-				return utils.ToBytes(b)
-			},
-		}
-		tx := FindTx(&blockchain{NewestHash: "x"}, "test")
-		if tx == nil {
-			t.Error("Tx should be found.")
-		}
-	})
-}
-
 func TestGetDifficulty(t *testing.T) {
 	blocks := []*Block{
 		{PrevHash: "x"},
@@ -153,26 +118,6 @@ func TestGetDifficulty(t *testing.T) {
 		if got != tc.want {
 			t.Errorf("getDifficulty() should return %d got %d", tc.want, got)
 		}
-	}
-}
-
-func TestAddPeerBlock(t *testing.T) {
-	bc := &blockchain{
-		Height:            1,
-		CurrentDifficulty: 1,
-		NewestHash:        "xx",
-	}
-	m.Txs["test"] = &Tx{}
-	nb := &Block{
-		Difficulty: 2,
-		Hash:       "test",
-		Transactions: []*Tx{
-			{ID: "test"},
-		},
-	}
-	bc.AddPeerBlock(nb)
-	if bc.CurrentDifficulty != 2 || bc.Height != 2 || bc.NewestHash != "test" {
-		t.Error("AddPeerBlock should mutate the blockchain")
 	}
 }
 

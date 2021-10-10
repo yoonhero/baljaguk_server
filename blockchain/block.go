@@ -14,13 +14,12 @@ import (
 // prevHash is previous block's hash
 // Height is id of block
 type Block struct {
-	Hash         string `json:"hash"`
-	PrevHash     string `json:"prevHash,omitempty"`
-	Height       int    `json:"height"`
-	Difficulty   int    `json:"difficulty"`
-	Nonce        int    `json:"nonce"`
-	Timestamp    int    `json:"timestamp"`
-	Transactions []*Tx  `json:"transactions"`
+	Hash       string `json:"hash"`
+	PrevHash   string `json:"prevHash,omitempty"`
+	Height     int    `json:"height"`
+	Difficulty int    `json:"difficulty"`
+	Nonce      int    `json:"nonce"`
+	Timestamp  int    `json:"timestamp"`
 }
 
 // persist data
@@ -80,7 +79,7 @@ func createBlock(prevHash string, height int, diff int, from string) *Block {
 		Nonce:      0,
 	}
 
-	block.Transactions = Mempool().TxToConfirm(from)
+	// block.Transactions = Mempool().TxToConfirm(from)
 
 	// mining the block
 	block.mine()
@@ -89,18 +88,4 @@ func createBlock(prevHash string, height int, diff int, from string) *Block {
 	persistBlock(block)
 
 	return block
-}
-
-// user mining function
-func userMining(prevHash string, height int, diff int, from string) (*Block, string) {
-	block := &Block{
-		Hash:       "",
-		PrevHash:   prevHash,
-		Height:     height,
-		Difficulty: diff,
-		Nonce:      0,
-	}
-
-	block.Transactions = Mempool().TxToConfirm(from)
-	return block, utils.Hash(block)
 }
