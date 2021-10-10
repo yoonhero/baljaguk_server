@@ -9,7 +9,7 @@ import (
 	"fmt"
 	"math/big"
 
-	"github.com/yoonhero/ohpotatocoin/utils"
+	"github.com/yoonhero/baljaguk_server/utils"
 )
 
 const (

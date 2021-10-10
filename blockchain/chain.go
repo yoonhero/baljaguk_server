@@ -8,8 +8,8 @@ import (
 	"net/http"
 	"sync"
 
-	"github.com/yoonhero/ohpotatocoin/db"
-	"github.com/yoonhero/ohpotatocoin/utils"
+	"github.com/yoonhero/baljaguk_server/db"
+	"github.com/yoonhero/baljaguk_server/utils"
 )
 
 const (

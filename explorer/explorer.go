@@ -7,7 +7,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/yoonhero/ohpotatocoin/blockchain"
+	"github.com/yoonhero/baljaguk_server/blockchain"
 )
 
 // set constant

@@ -1,4 +1,4 @@
-module github.com/yoonhero/ohpotatocoin
+module github.com/yoonhero/baljaguk_server
 
 go 1.16
 

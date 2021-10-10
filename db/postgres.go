@@ -7,7 +7,7 @@ import (
 	"os"
 
 	_ "github.com/lib/pq"
-	"github.com/yoonhero/ohpotatocoin/utils"
+	"github.com/yoonhero/baljaguk_server/utils"
 )
 
 const (

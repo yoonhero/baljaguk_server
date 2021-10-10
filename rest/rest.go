@@ -8,9 +8,9 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/yoonhero/ohpotatocoin/blockchain"
-	"github.com/yoonhero/ohpotatocoin/utils"
-	"github.com/yoonhero/ohpotatocoin/wallet"
+	"github.com/yoonhero/baljaguk_server/blockchain"
+	"github.com/yoonhero/baljaguk_server/utils"
+	"github.com/yoonhero/baljaguk_server/wallet"
 )
 
 // variable post string
@@ -215,19 +215,6 @@ func loggerMiddleWare(next http.Handler) http.Handler {
 func status(rw http.ResponseWriter, r *http.Request) {
 	blockchain.Status(blockchain.Blockchain(), rw)
 }
-
-// func balance(rw http.ResponseWriter, r *http.Request) {
-// 	vars := mux.Vars(r)
-// 	address := vars["address"]
-// 	total := r.URL.Query().Get("total")
-// 	switch total {
-// 	case "true":
-// 		amount := blockchain.BalanceByAddress(address, blockchain.Blockchain())
-// 		json.NewEncoder(rw).Encode(balanceResponse{address, amount})
-// 	default:
-// 		utils.HandleErr(json.NewEncoder(rw).Encode(blockchain.UTxOutsByAddress(address, blockchain.Blockchain())))
-// 	}
-// }
 
 func myWallet(rw http.ResponseWriter, r *http.Request) {
 	var payload walletPayload

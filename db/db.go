@@ -1,7 +1,7 @@
 package db
 
 import (
-	"github.com/yoonhero/ohpotatocoin/utils"
+	"github.com/yoonhero/baljaguk_server/utils"
 	bolt "go.etcd.io/bbolt"
 )
 

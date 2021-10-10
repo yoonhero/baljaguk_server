@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/yoonhero/ohpotatocoin/utils"
+	"github.com/yoonhero/baljaguk_server/utils"
 )
 
 func TestCreateBlock(t *testing.T) {

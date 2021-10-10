@@ -5,7 +5,7 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/yoonhero/ohpotatocoin/utils"
+	"github.com/yoonhero/baljaguk_server/utils"
 )
 
 type fakeDB struct {

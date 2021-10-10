@@ -7,8 +7,8 @@ import (
 	"runtime"
 	"strconv"
 
-	"github.com/yoonhero/ohpotatocoin/explorer"
-	"github.com/yoonhero/ohpotatocoin/rest"
+	"github.com/yoonhero/baljaguk_server/explorer"
+	"github.com/yoonhero/baljaguk_server/rest"
 )
 
 // type portsFlags []string
