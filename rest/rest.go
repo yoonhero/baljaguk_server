@@ -49,31 +49,12 @@ type urlDescription struct {
 // 	Message string `json:"message"`
 // }
 
-type balanceResponse struct {
-	Address string `json:"address"`
-	Balance int    `json:"balance"`
-}
-
-type myWalletResponse struct {
-	Address string `json:"address"`
-}
-
 type errorResponse struct {
 	ErrorMessage string `json:"errorMessage"`
 }
 
 type addBlockBody struct {
 	From string `json:"from"`
-}
-
-type addTxPayload struct {
-	Privkey string
-	To      string
-	Amount  int
-}
-
-type addPeerPayload struct {
-	Address, Port string
 }
 
 type walletPayload struct {
@@ -125,10 +106,10 @@ func documentation(rw http.ResponseWriter, r *http.Request) {
 			Payload:     "query: username, storename",
 		},
 		{
-			URL:         url("/transactions"),
+			URL:         url("/baljaguks"),
 			Method:      "POST",
-			Description: "Make a T ransaction",
-			Payload:     "{'privkey':''(from), 'to':'', 'amount':''}",
+			Description: "Add A Baljaguk Block",
+			Payload:     "{'store_id':'','user_id':'','timestamp':''}",
 		},
 		{
 			URL:         url("/createkey"),
@@ -248,11 +229,6 @@ func status(rw http.ResponseWriter, r *http.Request) {
 // 	}
 // }
 
-func latestblocks(rw http.ResponseWriter, r *http.Request) {
-	blockchain.LatestBlock(blockchain.Blockchain(), rw)
-	// utils.HandleErr(json.NewEncoder(rw).Encode())
-}
-
 func myWallet(rw http.ResponseWriter, r *http.Request) {
 	var payload walletPayload
 	json.NewDecoder(r.Body).Decode(&payload)
@@ -290,16 +266,18 @@ func Start(aPort int) {
 	// when  get or post "/" url
 	router.HandleFunc("/", documentation).Methods("GET")
 	router.HandleFunc("/status", status).Methods("GET")
+
 	// when get or post "/blocks" url
-	router.HandleFunc("/blocks", blocks).Methods("GET", "POST")
+	router.HandleFunc("/userblock", blocks).Methods("POST")
+	router.HandleFunc("/storeblock", blocks).Methods("POST")
+	router.HandleFunc("/baljaguks", blocks).Methods("POST")
+
 	// get parameter using mux
-	router.HandleFunc("/blocks/{hash:[a-f0-9]+}", block).Methods("GET")
-	// router.HandleFunc("/mining", mining).Methods("POST")
-	router.HandleFunc("/latestblocks", latestblocks).Methods("GET")
+	router.HandleFunc("/baljaguk/{username:[a-f0-9]+}", block).Methods("GET")
+	router.HandleFunc("/baljaguk/{storename:[a-f0-9]+}", block).Methods("GET")
+
 	router.HandleFunc("/wallet", myWallet).Methods("POST")
 	router.HandleFunc("/createkey", createKey).Methods("GET")
-	// router.HandleFunc("/ws", p2p.Upgrade).Methods("GET")
-	// router.HandleFunc("/peers", peers).Methods("GET", "POST")
 	fmt.Printf("Listening on http://localhost%s\n", port)
 
 	// print if err exist
