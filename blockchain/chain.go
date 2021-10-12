@@ -29,10 +29,12 @@ type blockchain struct {
 }
 
 type storage interface {
-	FindBlock(hash string) []byte
-	LoadChain() []byte
-	SaveBlock(hash string, data []byte)
-	SaveChain(data []byte)
+	FindUserBlock(hash string) []byte
+	FindStoreBlock(hash string) []byte
+	FindBaljaguk(hash string) []byte
+	SaveUserBlock(hash string, data []byte)
+	SaveStoreBlock(hash string, data []byte)
+	SaveBaljagukBlock(hash string, data []byte)
 	DeleteAllBlocks()
 }
 
