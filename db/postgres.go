@@ -15,7 +15,7 @@ const (
 	port     = 5432
 	user     = "postgres"
 	password = "randompassword"
-	dbname   = "go_project"
+	dbname   = "baljaguk_server"
 )
 
 var sqlDB *sql.DB
@@ -30,16 +30,20 @@ func dsn() string {
 		host, port, user, password, dbname)
 }
 
-func createCheckpointTable() {
-	stmt, err := sqlDB.Prepare("CREATE TABLE IF NOT EXISTS Checkpoint (Data bytea NOT NULL)")
+func createBlocksTable() {
+	stmt, err := sqlDB.Prepare("CREATE TABLE IF NOT EXISTS UserBlocks (Hash varchar(111) NOT NULL, Data bytea NOT NULL)")
 	utils.HandleErr(err)
 
 	_, err = stmt.Exec()
 	utils.HandleErr(err)
-}
 
-func createBlocksTable() {
-	stmt, err := sqlDB.Prepare("CREATE TABLE IF NOT EXISTS Blocks (Hash varchar(111) NOT NULL, Data bytea NOT NULL)")
+	stmt, err = sqlDB.Prepare("CREATE TABLE IF NOT EXISTS StoreBlocks (Hash varchar(111) NOT NULL, Data bytea NOT NULL)")
+	utils.HandleErr(err)
+
+	_, err = stmt.Exec()
+	utils.HandleErr(err)
+
+	stmt, err = sqlDB.Prepare("CREATE TABLE IF NOT EXISTS BaljagukBlocks (Hash varchar(111) NOT NULL, Data bytea NOT NULL)")
 	utils.HandleErr(err)
 
 	_, err = stmt.Exec()
@@ -63,61 +67,75 @@ func InitPostgresDB() {
 		sqlDB = db
 
 		createBlocksTable()
-		createCheckpointTable()
 	}
 }
 
 // save block data
-func saveBlockInSQL(hash string, data []byte) {
+func saveUserBlockInSQL(hash string, data []byte) {
 	// update database
-	_, err := sqlDB.Exec("INSERT INTO Blocks(Hash, Data) values($1, $2)", hash, data)
+	_, err := sqlDB.Exec("INSERT INTO UserBlocks(Hash, Data) values($1, $2)", hash, data)
 	utils.HandleErr(err)
 }
 
-// empty chain table
-func emptyChainTable() {
-	stmt, err := sqlDB.Prepare("DROP TABLE Checkpoint")
+func saveStoreBlockInSQL(hash string, data []byte) {
+	// update database
+	_, err := sqlDB.Exec("INSERT INTO StoreBlocks(Hash, Data) values($1, $2)", hash, data)
+	utils.HandleErr(err)
+}
+
+func saveBaljagukBlockInSQL(hash string, data []byte) {
+	// update database
+	_, err := sqlDB.Exec("INSERT INTO BaljagukBlocks(Hash, Data) values($1, $2)", hash, data)
+	utils.HandleErr(err)
+}
+
+func findUserBlockInSQL(hash string) []byte {
+	var data []byte
+
+	err := sqlDB.QueryRow("SELECT Data FROM UserBlocks WHERE Hash = $1", hash).Scan(&data)
+	utils.HandleErr(err)
+
+	return data
+}
+
+func findStoreBlockInSQL(hash string) []byte {
+	var data []byte
+
+	err := sqlDB.QueryRow("SELECT Data FROM StoreBlocks WHERE Hash = $1", hash).Scan(&data)
+	utils.HandleErr(err)
+
+	return data
+}
+
+func findBaljagukBlockInSQL(hash string) []byte {
+	var data []byte
+
+	err := sqlDB.QueryRow("SELECT Data FROM BaljagukBlocks WHERE Hash = $1", hash).Scan(&data)
+	utils.HandleErr(err)
+
+	return data
+}
+
+func emptyUserBlocksInSQL() {
+	stmt, err := sqlDB.Prepare("DROP TABLE UserBlocks")
 	utils.HandleErr(err)
 
 	_, err = stmt.Exec()
 	utils.HandleErr(err)
-	createCheckpointTable()
+	createBlocksTable()
 }
 
-// save chain
-func saveChainInSQL(data []byte) {
-	emptyChainTable()
-
-	_, err := sqlDB.Exec("INSERT INTO Checkpoint(Data) values($1)", data)
-	utils.HandleErr(err)
-}
-
-func loadChainInSQL() []byte {
-	var data []byte
-
-	rows, err := sqlDB.Query("SELECT Data FROM Checkpoint")
+func emptyStoreBlocksInSQL() {
+	stmt, err := sqlDB.Prepare("DROP TABLE StoreBlocks")
 	utils.HandleErr(err)
 
-	defer rows.Close()
-	for rows.Next() {
-		err = rows.Scan(&data)
-		utils.HandleErr(err)
-	}
-
-	return data
-}
-
-func findBlockInSQL(hash string) []byte {
-	var data []byte
-
-	err := sqlDB.QueryRow("SELECT Data FROM Blocks WHERE Hash = $1", hash).Scan(&data)
+	_, err = stmt.Exec()
 	utils.HandleErr(err)
-
-	return data
+	createBlocksTable()
 }
 
-func emptyBlocksInSQL() {
-	stmt, err := sqlDB.Prepare("DROP TABLE Blocks")
+func emptyBaljagukBlocksInSQL() {
+	stmt, err := sqlDB.Prepare("DROP TABLE BaljagukBlocks")
 	utils.HandleErr(err)
 
 	_, err = stmt.Exec()
