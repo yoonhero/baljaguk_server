@@ -87,6 +87,7 @@ func InitPostgresDB() {
 		sqlDB = db
 
 		createBlocksTable()
+		createCheckpointTable()
 	}
 }
 
@@ -135,7 +136,7 @@ func emptyStoreChainTable() {
 
 // save chain
 func saveStoreChainInSQL(data []byte) {
-	emptyUserChainTable()
+	emptyStoreChainTable()
 
 	_, err := sqlDB.Exec("INSERT INTO StoreCheckpoint(Data) values($1)", data)
 	utils.HandleErr(err)
@@ -168,7 +169,7 @@ func emptyBaljagukChainTable() {
 
 // save chain
 func saveBaljagukChainInSQL(data []byte) {
-	emptyUserChainTable()
+	emptyBaljagukChainTable()
 
 	_, err := sqlDB.Exec("INSERT INTO BaljagukCheckpoint(Data) values($1)", data)
 	utils.HandleErr(err)
