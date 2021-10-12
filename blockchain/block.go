@@ -1,7 +1,6 @@
 package blockchain
 
 import (
-	"errors"
 	"strings"
 	"time"
 
@@ -22,35 +21,9 @@ type Block struct {
 	Timestamp  int    `json:"timestamp"`
 }
 
-// persist data
-func persistBlock(b *Block) {
-	// db.SaveBlock(b.Hash, utils.ToBytes(b))
-	dbStorage.SaveBlock(b.Hash, utils.ToBytes(b))
-}
-
 // restore data
 func (b *Block) restore(data []byte) {
 	utils.FromBytes(b, data)
-}
-
-var ErrNotFound = errors.New("Block not Found")
-
-// find block by hash
-func FindBlock(hash string) (*Block, error) {
-	// blockBytes := db.Block(hash)
-	blockBytes := dbStorage.FindBlock(hash)
-
-	// if that block don't exist
-	if blockBytes == nil {
-		// return nil with error
-		return nil, ErrNotFound
-	}
-
-	block := &Block{}
-	// restore the block data
-	block.restore(blockBytes)
-
-	return block, nil
 }
 
 // mine the block
@@ -67,25 +40,4 @@ func (b *Block) mine() {
 			b.Nonce++
 		}
 	}
-}
-
-// create block
-func createBlock(prevHash string, height int, diff int, from string) *Block {
-	block := &Block{
-		Hash:       "",
-		PrevHash:   prevHash,
-		Height:     height,
-		Difficulty: diff,
-		Nonce:      0,
-	}
-
-	// block.Transactions = Mempool().TxToConfirm(from)
-
-	// mining the block
-	block.mine()
-
-	// persist the block
-	persistBlock(block)
-
-	return block
 }

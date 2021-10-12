@@ -32,9 +32,15 @@ type storage interface {
 	FindUserBlock(hash string) []byte
 	FindStoreBlock(hash string) []byte
 	FindBaljaguk(hash string) []byte
+	LoadUserChain() []byte
+	LoadStoreChain() []byte
+	LoadBaljagukChain() []byte
 	SaveUserBlock(hash string, data []byte)
 	SaveStoreBlock(hash string, data []byte)
 	SaveBaljagukBlock(hash string, data []byte)
+	SaveUserChain(data []byte)
+	SaveStoreChain(data []byte)
+	SaveBaljagukChain(data []byte)
 	DeleteAllBlocks()
 }
 
