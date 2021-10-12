@@ -20,24 +20,34 @@ var db *bolt.DB
 type DB struct {
 }
 
-func (DB) FindBlock(hash string) []byte {
-	return findBlockInSQL(hash)
+func (DB) FindUserBlock(hash string) []byte {
+	return findUserBlockInSQL(hash)
 }
 
-func (DB) LoadChain() []byte {
-	return loadChainInSQL()
+func (DB) FindStoreBlock(hash string) []byte {
+	return findStoreBlockInSQL(hash)
 }
 
-func (DB) SaveBlock(hash string, data []byte) {
-	saveBlockInSQL(hash, data)
+func (DB) FindBaljaguk(hash string) []byte {
+	return findBaljagukBlockInSQL(hash)
 }
 
-func (DB) SaveChain(data []byte) {
-	saveChainInSQL(data)
+func (DB) SaveUserBlock(hash string, data []byte) {
+	saveUserBlockInSQL(hash, data)
+}
+
+func (DB) SaveStoreBlock(hash string, data []byte) {
+	saveStoreBlockInSQL(hash, data)
+}
+
+func (DB) SaveBaljagukBlock(hash string, data []byte) {
+	saveBaljagukBlockInSQL(hash, data)
 }
 
 func (DB) DeleteAllBlocks() {
-	emptyBlocksInSQL()
+	emptyUserBlocksInSQL()
+	emptyStoreBlocksInSQL()
+	emptyBaljagukBlocksInSQL()
 }
 
 // func getDbName() string {
