@@ -50,6 +50,26 @@ func createBlocksTable() {
 	utils.HandleErr(err)
 }
 
+func createCheckpointTable() {
+	stmt, err := sqlDB.Prepare("CREATE TABLE IF NOT EXISTS UserCheckpoint (Data bytea NOT NULL)")
+	utils.HandleErr(err)
+
+	_, err = stmt.Exec()
+	utils.HandleErr(err)
+
+	stmt, err = sqlDB.Prepare("CREATE TABLE IF NOT EXISTS StoreCheckpoint (Data bytea NOT NULL)")
+	utils.HandleErr(err)
+
+	_, err = stmt.Exec()
+	utils.HandleErr(err)
+
+	stmt, err = sqlDB.Prepare("CREATE TABLE IF NOT EXISTS BaljagukCheckpoint (Data bytea NOT NULL)")
+	utils.HandleErr(err)
+
+	_, err = stmt.Exec()
+	utils.HandleErr(err)
+}
+
 func CloseSqlDB() {
 	sqlDB.Close()
 }
@@ -68,6 +88,105 @@ func InitPostgresDB() {
 
 		createBlocksTable()
 	}
+}
+
+// empty chain table
+func emptyUserChainTable() {
+	stmt, err := sqlDB.Prepare("DROP TABLE UserCheckpoint")
+	utils.HandleErr(err)
+
+	_, err = stmt.Exec()
+	utils.HandleErr(err)
+	createCheckpointTable()
+}
+
+// save chain
+func saveUserChainInSQL(data []byte) {
+	emptyUserChainTable()
+
+	_, err := sqlDB.Exec("INSERT INTO UserCheckpoint(Data) values($1)", data)
+	utils.HandleErr(err)
+}
+
+func loadUserChainInSQL() []byte {
+	var data []byte
+
+	rows, err := sqlDB.Query("SELECT Data FROM UserCheckpoint")
+	utils.HandleErr(err)
+
+	defer rows.Close()
+	for rows.Next() {
+		err = rows.Scan(&data)
+		utils.HandleErr(err)
+	}
+
+	return data
+}
+
+// empty chain table
+func emptyStoreChainTable() {
+	stmt, err := sqlDB.Prepare("DROP TABLE StoreCheckpoint")
+	utils.HandleErr(err)
+
+	_, err = stmt.Exec()
+	utils.HandleErr(err)
+	createCheckpointTable()
+}
+
+// save chain
+func saveStoreChainInSQL(data []byte) {
+	emptyUserChainTable()
+
+	_, err := sqlDB.Exec("INSERT INTO StoreCheckpoint(Data) values($1)", data)
+	utils.HandleErr(err)
+}
+
+func loadStoreChainInSQL() []byte {
+	var data []byte
+
+	rows, err := sqlDB.Query("SELECT Data FROM StoreCheckpoint")
+	utils.HandleErr(err)
+
+	defer rows.Close()
+	for rows.Next() {
+		err = rows.Scan(&data)
+		utils.HandleErr(err)
+	}
+
+	return data
+}
+
+// empty chain table
+func emptyBaljagukChainTable() {
+	stmt, err := sqlDB.Prepare("DROP TABLE BaljagukCheckpoint")
+	utils.HandleErr(err)
+
+	_, err = stmt.Exec()
+	utils.HandleErr(err)
+	createCheckpointTable()
+}
+
+// save chain
+func saveBaljagukChainInSQL(data []byte) {
+	emptyUserChainTable()
+
+	_, err := sqlDB.Exec("INSERT INTO BaljagukCheckpoint(Data) values($1)", data)
+	utils.HandleErr(err)
+}
+
+func loadBaljagukChainInSQL() []byte {
+	var data []byte
+
+	rows, err := sqlDB.Query("SELECT Data FROM BaljagukCheckpoint")
+	utils.HandleErr(err)
+
+	defer rows.Close()
+	for rows.Next() {
+		err = rows.Scan(&data)
+		utils.HandleErr(err)
+	}
+
+	return data
 }
 
 // save block data
