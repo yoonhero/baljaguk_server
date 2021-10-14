@@ -170,7 +170,7 @@ func storeBlocks(rw http.ResponseWriter, r *http.Request) {
 		// rw.Header().Add("Content-Type", "application/json")
 
 		// send all blocks
-		utils.HandleErr(json.NewEncoder(rw).Encode(blockchain.UserBlocks(blockchain.UserBlockchain())))
+		utils.HandleErr(json.NewEncoder(rw).Encode(blockchain.StoreBlocks(blockchain.StoreBlockchain())))
 
 		// when POST
 	case "POST":
@@ -185,7 +185,7 @@ func storeBlocks(rw http.ResponseWriter, r *http.Request) {
 		// utils.HandleErr(json.NewDecoder(r.Body).Decode(&addBlockBody))
 
 		// add block whose data is addBlockBody.Message
-		blockchain.UserBlockchain().AddUserBlock(addBlockBody.From)
+		blockchain.StoreBlockchain().AddStoreBlock(addBlockBody.From)
 
 		// p2p.BroadcastNewBlock(newBlock)
 
@@ -204,7 +204,7 @@ func baljagukBlocks(rw http.ResponseWriter, r *http.Request) {
 		// rw.Header().Add("Content-Type", "application/json")
 
 		// send all blocks
-		utils.HandleErr(json.NewEncoder(rw).Encode(blockchain.UserBlocks(blockchain.UserBlockchain())))
+		utils.HandleErr(json.NewEncoder(rw).Encode(blockchain.BaljagukBlocks(blockchain.BaljagukBlockchain())))
 
 		// when POST
 	case "POST":
@@ -219,7 +219,7 @@ func baljagukBlocks(rw http.ResponseWriter, r *http.Request) {
 		// utils.HandleErr(json.NewDecoder(r.Body).Decode(&addBlockBody))
 
 		// add block whose data is addBlockBody.Message
-		blockchain.UserBlockchain().AddUserBlock(addBlockBody.From)
+		blockchain.BaljagukBlockchain().AddBaljagukBlock(addBlockBody.From)
 
 		// p2p.BroadcastNewBlock(newBlock)
 
