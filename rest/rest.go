@@ -127,8 +127,8 @@ func documentation(rw http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(rw).Encode(data)
 }
 
-// when get or post url /blocks
-func blocks(rw http.ResponseWriter, r *http.Request) {
+// when get or post url /userblock
+func userBlocks(rw http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	// when GET
 	case "GET":
@@ -136,7 +136,7 @@ func blocks(rw http.ResponseWriter, r *http.Request) {
 		// rw.Header().Add("Content-Type", "application/json")
 
 		// send all blocks
-		utils.HandleErr(json.NewEncoder(rw).Encode(blockchain.Blocks(blockchain.Blockchain())))
+		utils.HandleErr(json.NewEncoder(rw).Encode(blockchain.UserBlocks(blockchain.UserBlockchain())))
 
 		// when POST
 	case "POST":
@@ -151,7 +151,75 @@ func blocks(rw http.ResponseWriter, r *http.Request) {
 		// utils.HandleErr(json.NewDecoder(r.Body).Decode(&addBlockBody))
 
 		// add block whose data is addBlockBody.Message
-		blockchain.Blockchain().AddBlock(addBlockBody.From)
+		blockchain.UserBlockchain().AddUserBlock(addBlockBody.From)
+
+		// p2p.BroadcastNewBlock(newBlock)
+
+		// send a 201 sign
+		rw.WriteHeader(http.StatusCreated)
+	}
+
+}
+
+// when get or post url /userblock
+func storeBlocks(rw http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	// when GET
+	case "GET":
+		// recognize that this content is json
+		// rw.Header().Add("Content-Type", "application/json")
+
+		// send all blocks
+		utils.HandleErr(json.NewEncoder(rw).Encode(blockchain.UserBlocks(blockchain.UserBlockchain())))
+
+		// when POST
+	case "POST":
+		var addBlockBody addBlockBody
+		json.NewDecoder(r.Body).Decode(&addBlockBody)
+		// {"message":"myblockdata"}
+
+		// // new variable struct AddBlockBody
+		// var addBlockBody addBlockBody
+
+		// // send pointers and set variable a posted data
+		// utils.HandleErr(json.NewDecoder(r.Body).Decode(&addBlockBody))
+
+		// add block whose data is addBlockBody.Message
+		blockchain.UserBlockchain().AddUserBlock(addBlockBody.From)
+
+		// p2p.BroadcastNewBlock(newBlock)
+
+		// send a 201 sign
+		rw.WriteHeader(http.StatusCreated)
+	}
+
+}
+
+// when get or post url /userblock
+func baljagukBlocks(rw http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	// when GET
+	case "GET":
+		// recognize that this content is json
+		// rw.Header().Add("Content-Type", "application/json")
+
+		// send all blocks
+		utils.HandleErr(json.NewEncoder(rw).Encode(blockchain.UserBlocks(blockchain.UserBlockchain())))
+
+		// when POST
+	case "POST":
+		var addBlockBody addBlockBody
+		json.NewDecoder(r.Body).Decode(&addBlockBody)
+		// {"message":"myblockdata"}
+
+		// // new variable struct AddBlockBody
+		// var addBlockBody addBlockBody
+
+		// // send pointers and set variable a posted data
+		// utils.HandleErr(json.NewDecoder(r.Body).Decode(&addBlockBody))
+
+		// add block whose data is addBlockBody.Message
+		blockchain.UserBlockchain().AddUserBlock(addBlockBody.From)
 
 		// p2p.BroadcastNewBlock(newBlock)
 
@@ -177,7 +245,7 @@ func block(rw http.ResponseWriter, r *http.Request) {
 	// utils.HandleErr(err)
 
 	// FindBlock by id
-	block, err := blockchain.FindBlock(hash)
+	block, err := blockchain.FindUserBlock(hash)
 
 	encoder := json.NewEncoder(rw)
 
@@ -213,7 +281,7 @@ func loggerMiddleWare(next http.Handler) http.Handler {
 }
 
 func status(rw http.ResponseWriter, r *http.Request) {
-	blockchain.Status(blockchain.Blockchain(), rw)
+	blockchain.Status(blockchain.BaljagukBlockchain(), rw)
 }
 
 func myWallet(rw http.ResponseWriter, r *http.Request) {
@@ -255,9 +323,9 @@ func Start(aPort int) {
 	router.HandleFunc("/status", status).Methods("GET")
 
 	// when get or post "/blocks" url
-	router.HandleFunc("/userblock", blocks).Methods("POST")
-	router.HandleFunc("/storeblock", blocks).Methods("POST")
-	router.HandleFunc("/baljaguks", blocks).Methods("POST")
+	router.HandleFunc("/userblock", userBlocks).Methods("POST")
+	router.HandleFunc("/storeblock", storeBlocks).Methods("POST")
+	router.HandleFunc("/baljaguks", baljagukBlocks).Methods("POST")
 
 	// get parameter using mux
 	router.HandleFunc("/baljaguk/{username:[a-f0-9]+}", block).Methods("GET")
