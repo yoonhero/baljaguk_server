@@ -15,7 +15,7 @@ const (
 	port     = 5432
 	user     = "postgres"
 	password = "randompassword"
-	dbname   = "baljaguk_server"
+	dbname   = "baljaguk"
 )
 
 var sqlDB *sql.DB

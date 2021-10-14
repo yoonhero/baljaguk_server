@@ -129,69 +129,46 @@ func documentation(rw http.ResponseWriter, r *http.Request) {
 
 // when get or post url /userblock
 func userBlocks(rw http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	// when GET
-	case "GET":
-		// recognize that this content is json
-		// rw.Header().Add("Content-Type", "application/json")
+	var addBlockBody addBlockBody
+	json.NewDecoder(r.Body).Decode(&addBlockBody)
+	// {"message":"myblockdata"}
 
-		// send all blocks
-		utils.HandleErr(json.NewEncoder(rw).Encode(blockchain.UserBlocks(blockchain.UserBlockchain())))
+	// // new variable struct AddBlockBody
+	// var addBlockBody addBlockBody
 
-		// when POST
-	case "POST":
-		var addBlockBody addBlockBody
-		json.NewDecoder(r.Body).Decode(&addBlockBody)
-		// {"message":"myblockdata"}
+	// // send pointers and set variable a posted data
+	// utils.HandleErr(json.NewDecoder(r.Body).Decode(&addBlockBody))
 
-		// // new variable struct AddBlockBody
-		// var addBlockBody addBlockBody
+	// add block whose data is addBlockBody.Message
+	blockchain.UserBlockchain().AddUserBlock(addBlockBody.From)
 
-		// // send pointers and set variable a posted data
-		// utils.HandleErr(json.NewDecoder(r.Body).Decode(&addBlockBody))
+	// p2p.BroadcastNewBlock(newBlock)
 
-		// add block whose data is addBlockBody.Message
-		blockchain.UserBlockchain().AddUserBlock(addBlockBody.From)
-
-		// p2p.BroadcastNewBlock(newBlock)
-
-		// send a 201 sign
-		rw.WriteHeader(http.StatusCreated)
-	}
+	// send a 201 sign
+	rw.WriteHeader(http.StatusCreated)
 
 }
 
 // when get or post url /userblock
 func storeBlocks(rw http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	// when GET
-	case "GET":
-		// recognize that this content is json
-		// rw.Header().Add("Content-Type", "application/json")
 
-		// send all blocks
-		utils.HandleErr(json.NewEncoder(rw).Encode(blockchain.StoreBlocks(blockchain.StoreBlockchain())))
+	var addBlockBody addBlockBody
+	json.NewDecoder(r.Body).Decode(&addBlockBody)
+	// {"message":"myblockdata"}
 
-		// when POST
-	case "POST":
-		var addBlockBody addBlockBody
-		json.NewDecoder(r.Body).Decode(&addBlockBody)
-		// {"message":"myblockdata"}
+	// // new variable struct AddBlockBody
+	// var addBlockBody addBlockBody
 
-		// // new variable struct AddBlockBody
-		// var addBlockBody addBlockBody
+	// // send pointers and set variable a posted data
+	// utils.HandleErr(json.NewDecoder(r.Body).Decode(&addBlockBody))
 
-		// // send pointers and set variable a posted data
-		// utils.HandleErr(json.NewDecoder(r.Body).Decode(&addBlockBody))
+	// add block whose data is addBlockBody.Message
+	blockchain.StoreBlockchain().AddStoreBlock(addBlockBody.From)
 
-		// add block whose data is addBlockBody.Message
-		blockchain.StoreBlockchain().AddStoreBlock(addBlockBody.From)
+	// p2p.BroadcastNewBlock(newBlock)
 
-		// p2p.BroadcastNewBlock(newBlock)
-
-		// send a 201 sign
-		rw.WriteHeader(http.StatusCreated)
-	}
+	// send a 201 sign
+	rw.WriteHeader(http.StatusCreated)
 
 }
 
@@ -325,7 +302,7 @@ func Start(aPort int) {
 	// when get or post "/blocks" url
 	router.HandleFunc("/userblock", userBlocks).Methods("POST")
 	router.HandleFunc("/storeblock", storeBlocks).Methods("POST")
-	router.HandleFunc("/baljaguks", baljagukBlocks).Methods("POST")
+	router.HandleFunc("/baljaguks", baljagukBlocks)
 
 	// get parameter using mux
 	router.HandleFunc("/baljaguk/{username:[a-f0-9]+}", block).Methods("GET")
