@@ -12,6 +12,22 @@ func persistUserBlock(b *Block) {
 	dbStorage.SaveUserBlock(b.Hash, utils.ToBytes(b))
 }
 
+// mine the block
+func (b *Block) mine() {
+	target := strings.Repeat("0", b.Difficulty)
+	for {
+		b.Timestamp = int(time.Now().Unix())
+		hash := utils.Hash(b)
+		if strings.HasPrefix(hash, target) {
+			b.Hash = hash
+			// fmt.Printf("Target:%s\nHash:%s\nNonce:%d\n\n\n", target, hash, b.Nonce)
+			break
+		} else {
+			b.Nonce++
+		}
+	}
+}
+
 var ErrNotFound = errors.New("Block not Found")
 
 // find block by hash
