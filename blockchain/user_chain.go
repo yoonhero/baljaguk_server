@@ -2,24 +2,6 @@
 // variable blockchain pointers
 var user_b *blockchain
 
-func (b *blockchain) Replace(newBlocks []*Block) {
-	b.m.Lock()
-	defer b.m.Unlock()
-	b.CurrentDifficulty = newBlocks[0].Difficulty
-	b.Height = len(newBlocks)
-	b.NewestHash = newBlocks[0].Hash
-	persistBlockchain(b)
-	dbStorage.DeleteAllBlocks()
-	for _, block := range newBlocks {
-		persistBlock(block)
-	}
-}
-
-func (b *blockchain) LockBlockchain() {
-	b.m.Lock()
-	defer b.m.Unlock()
-}
-
 // add block to blockchain
 func (b *blockchain) AddUserBlock(from string) *Block {
 	// createBlock

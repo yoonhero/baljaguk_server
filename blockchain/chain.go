@@ -49,6 +49,11 @@ var once sync.Once
 
 var dbStorage storage = db.DB{}
 
+func (b *blockchain) LockBlockchain() {
+	b.m.Lock()
+	defer b.m.Unlock()
+}
+
 func (b *blockchain) restore(data []byte) {
 	// decoder := gob.NewDecoder(bytes.NewReader(data))
 	// decoder.Decode(b)
