@@ -1,3 +1,6 @@
+package blockchain
+
+import "github.com/yoonhero/baljaguk_server/utils"
 
 // variable blockchain pointers
 var store_b *blockchain
@@ -5,7 +8,7 @@ var store_b *blockchain
 // add block to blockchain
 func (b *blockchain) AddStoreBlock(from string) *Block {
 	// createBlock
-	block := createBlock(b.NewestHash, b.Height+1, getStoreDifficulty(b), from)
+	block := createStoreBlock(b.NewestHash, b.Height+1, getStoreDifficulty(b), from)
 
 	// set newesthash new block's hash
 	b.NewestHash = block.Hash
@@ -47,7 +50,7 @@ func persistStoreBlockchain(b *blockchain) {
 	dbStorage.SaveStoreChain((utils.ToBytes(b)))
 }
 
-func UserBlockchain() *blockchain {
+func StoreBlockchain() *blockchain {
 	// run only one time
 	once.Do(func() {
 		// initial blockchain struct
@@ -59,7 +62,7 @@ func UserBlockchain() *blockchain {
 
 		if checkpoint == nil {
 			// if blockchain don't exist create block
-			store_b.AddBlock("")
+			store_b.AddStoreBlock("")
 		} else {
 			// restore data from db
 			store_b.restore(checkpoint)

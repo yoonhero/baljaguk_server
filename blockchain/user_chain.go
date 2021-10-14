@@ -1,3 +1,6 @@
+package blockchain
+
+import "github.com/yoonhero/baljaguk_server/utils"
 
 // variable blockchain pointers
 var user_b *blockchain
@@ -5,7 +8,7 @@ var user_b *blockchain
 // add block to blockchain
 func (b *blockchain) AddUserBlock(from string) *Block {
 	// createBlock
-	block := createBlock(b.NewestHash, b.Height+1, getUserDifficulty(b), from)
+	block := createUserBlock(b.NewestHash, b.Height+1, getUserDifficulty(b), from)
 
 	// set newesthash new block's hash
 	b.NewestHash = block.Hash
@@ -59,7 +62,7 @@ func UserBlockchain() *blockchain {
 
 		if checkpoint == nil {
 			// if blockchain don't exist create block
-			user_b.AddBlock("")
+			user_b.AddUserBlock("")
 		} else {
 			// restore data from db
 			user_b.restore(checkpoint)

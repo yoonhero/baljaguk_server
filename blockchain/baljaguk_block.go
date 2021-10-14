@@ -1,8 +1,6 @@
-import (
-	"errors"
-	"strings"
-	"time"
+package blockchain
 
+import (
 	"github.com/yoonhero/baljaguk_server/utils"
 )
 
@@ -12,12 +10,10 @@ func persistBaljagukBlock(b *Block) {
 	dbStorage.SaveBaljagukBlock(b.Hash, utils.ToBytes(b))
 }
 
-var ErrNotFound = errors.New("Block not Found")
-
 // find block by hash
 func FindBaljagukBlock(hash string) (*Block, error) {
 	// blockBytes := db.Block(hash)
-	blockBytes := dbStorage.FindBaljagukBlock(hash)
+	blockBytes := dbStorage.FindBaljaguk(hash)
 
 	// if that block don't exist
 	if blockBytes == nil {

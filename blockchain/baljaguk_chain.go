@@ -1,3 +1,6 @@
+package blockchain
+
+import "github.com/yoonhero/baljaguk_server/utils"
 
 // variable blockchain pointers
 var baljaguk_b *blockchain
@@ -5,7 +8,7 @@ var baljaguk_b *blockchain
 // add block to blockchain
 func (b *blockchain) AddBaljagukBlock(from string) *Block {
 	// createBlock
-	block := createBlock(b.NewestHash, b.Height+1, getBaljagukDifficulty(b), from)
+	block := createBaljagukBlock(b.NewestHash, b.Height+1, getBaljagukDifficulty(b), from)
 
 	// set newesthash new block's hash
 	b.NewestHash = block.Hash
@@ -47,7 +50,7 @@ func persistBaljagukBlockchain(b *blockchain) {
 	dbStorage.SaveBaljagukChain((utils.ToBytes(b)))
 }
 
-func UserBlockchain() *blockchain {
+func BaljagukBlockchain() *blockchain {
 	// run only one time
 	once.Do(func() {
 		// initial blockchain struct
@@ -59,7 +62,7 @@ func UserBlockchain() *blockchain {
 
 		if checkpoint == nil {
 			// if blockchain don't exist create block
-			baljaguk_b.AddBlock("")
+			baljaguk_b.AddBaljagukBlock("")
 		} else {
 			// reBaljaguk data from db
 			baljaguk_b.restore(checkpoint)

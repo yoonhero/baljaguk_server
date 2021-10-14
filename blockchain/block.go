@@ -1,6 +1,10 @@
 package blockchain
 
 import (
+	"errors"
+	"strings"
+	"time"
+
 	"github.com/yoonhero/baljaguk_server/utils"
 )
 
@@ -16,6 +20,24 @@ type Block struct {
 	Difficulty int    `json:"difficulty"`
 	Nonce      int    `json:"nonce"`
 	Timestamp  int    `json:"timestamp"`
+}
+
+var ErrNotFound = errors.New("Block not Found")
+
+// mine the block
+func (b *Block) mine() {
+	target := strings.Repeat("0", b.Difficulty)
+	for {
+		b.Timestamp = int(time.Now().Unix())
+		hash := utils.Hash(b)
+		if strings.HasPrefix(hash, target) {
+			b.Hash = hash
+			// fmt.Printf("Target:%s\nHash:%s\nNonce:%d\n\n\n", target, hash, b.Nonce)
+			break
+		} else {
+			b.Nonce++
+		}
+	}
 }
 
 // restore data
