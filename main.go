@@ -10,14 +10,17 @@ import (
 )
 
 func main() {
-	// os.Setenv("PORT", "4000")
 
-	port := os.Getenv("PORT")
 	// close db to protect db file data
 	defer db.CloseSqlDB()
 	db.InitPostgresDB()
+	port := os.Getenv("PORT")
 
-	sv, err := strconv.Atoi(port)
-	utils.HandleErr(err)
-	rest.Start(sv)
+	if port == "" {
+		rest.Start(4000)
+	} else {
+		sv, err := strconv.Atoi(port)
+		utils.HandleErr(err)
+		rest.Start(sv)
+	}
 }
