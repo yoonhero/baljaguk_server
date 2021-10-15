@@ -16,6 +16,9 @@ type BaljagukBlock struct {
 	Timestamp  int    `json:"timestamp"`
 	StoreHash  string `json:"storehash"`
 	UserHash   string `json:"userhash"`
+
+	Latitude  string `json:"latitude"`
+	Longitude string `json:"longitude"`
 }
 
 type BaljagukData struct {
@@ -81,6 +84,8 @@ func createBaljagukBlock(prevHash string, height int, diff int, data BaljagukDat
 		Nonce:      0,
 		StoreHash:  data.StoreHash,
 		UserHash:   data.UserHash,
+		Latitude:   data.Latitude,
+		Longitude:  data.Longitude,
 	}
 
 	// block.Transactions = Mempool().TxToConfirm(from)
