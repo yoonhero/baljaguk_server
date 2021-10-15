@@ -192,7 +192,7 @@ func findUser(rw http.ResponseWriter, r *http.Request) {
 	hash := vars["hash"]
 
 	// FindBlock by Hash
-	block, err := blockchain.FindUserBlock(hash)
+	block, err := blockchain.FindUserBlockByAddress(hash)
 
 	encoder := json.NewEncoder(rw)
 
@@ -211,7 +211,7 @@ func findStore(rw http.ResponseWriter, r *http.Request) {
 	hash := vars["hash"]
 
 	// FindBlock by Hash
-	block, err := blockchain.FindStoreBlock(hash)
+	block, err := blockchain.FindUserStoreByAddress(hash)
 
 	encoder := json.NewEncoder(rw)
 
