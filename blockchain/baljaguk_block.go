@@ -21,6 +21,9 @@ type BaljagukBlock struct {
 type BaljagukData struct {
 	StoreHash string `json:"storehash"`
 	UserHash  string `json:"userhash"`
+
+	Latitude  string `json:"latitude"`
+	Longitude string `json:"longitude"`
 }
 
 // persist data

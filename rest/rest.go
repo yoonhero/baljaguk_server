@@ -54,6 +54,9 @@ type addStoreBlockBody struct {
 type addBaljagukBlockBody struct {
 	StoreHash string `json:"storehash"`
 	UserHash  string `json:"userhash"`
+
+	Latitude  string `json:"latitude"`
+	Longitude string `json:"longitude"`
 }
 
 type walletPayload struct {
@@ -203,11 +206,11 @@ func baljagukBlocks(rw http.ResponseWriter, r *http.Request) {
 		// utils.HandleErr(json.NewDecoder(r.Body).Decode(&addBlockBody))
 
 		// add block whose dat`a is addBlockBody.Message
-		if addBaljagukBlockBody.UserHash == "" && addBaljagukBlockBody.StoreHash == "" {
+		if addBaljagukBlockBody.UserHash == "" && addBaljagukBlockBody.StoreHash == "" && addBaljagukBlockBody.Latitude == "" && addBaljagukBlockBody.Longitude == "" {
 			rw.WriteHeader(http.StatusNoContent)
 			return
 		}
-		blockchain.BaljagukBlockchain().AddBaljagukBlock(addBaljagukBlockBody.StoreHash, addBaljagukBlockBody.UserHash)
+		blockchain.BaljagukBlockchain().AddBaljagukBlock(addBaljagukBlockBody.StoreHash, addBaljagukBlockBody.UserHash, addBaljagukBlockBody.Latitude, addBaljagukBlockBody.Longitude)
 
 		// p2p.BroadcastNewBlock(newBlock)
 

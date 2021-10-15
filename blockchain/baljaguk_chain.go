@@ -6,10 +6,12 @@ import "github.com/yoonhero/baljaguk_server/utils"
 var baljaguk_b *blockchain
 
 // add block to blockchain
-func (b *blockchain) AddBaljagukBlock(StoreHash string, UserHash string) *BaljagukBlock {
+func (b *blockchain) AddBaljagukBlock(StoreHash string, UserHash string, Latitude string, Longitude string) *BaljagukBlock {
 	data := BaljagukData{
 		StoreHash: StoreHash,
 		UserHash:  UserHash,
+		Latitude:  Latitude,
+		Longitude: Longitude,
 	}
 	// createBlock
 	block := createBaljagukBlock(b.NewestHash, b.Height+1, getBaljagukDifficulty(b), data)
@@ -66,7 +68,7 @@ func BaljagukBlockchain() *blockchain {
 
 		if checkpoint == nil {
 			// if blockchain don't exist create block
-			baljaguk_b.AddBaljagukBlock("", "")
+			baljaguk_b.AddBaljagukBlock("", "", "", "")
 		} else {
 			// reBaljaguk data from db
 			baljaguk_b.restore(checkpoint)
