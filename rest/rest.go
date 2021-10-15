@@ -157,6 +157,11 @@ func userBlocks(rw http.ResponseWriter, r *http.Request) {
 	// // send pointers and set variable a posted data
 	// utils.HandleErr(json.NewDecoder(r.Body).Decode(&addBlockBody))
 
+	if addUserBlockBody.Address == "" && addUserBlockBody.PrivateKey == "" && addUserBlockBody.PhoneNumber == "" && addUserBlockBody.Email == "" {
+		rw.WriteHeader(http.StatusNoContent)
+		return
+	}
+
 	// add block whose data is addBlockBody.Message
 	blockchain.UserBlockchain().AddUserBlock(addUserBlockBody.Address, addUserBlockBody.PrivateKey, addUserBlockBody.PhoneNumber, addUserBlockBody.Email)
 
@@ -177,6 +182,11 @@ func storeBlocks(rw http.ResponseWriter, r *http.Request) {
 
 	// // send pointers and set variable a posted data
 	// utils.HandleErr(json.NewDecoder(r.Body).Decode(&addBlockBody))
+
+	if addStoreBlockBody.Address == "" && addStoreBlockBody.PrivateKey == "" && addStoreBlockBody.PhoneNumber == "" {
+		rw.WriteHeader(http.StatusNoContent)
+		return
+	}
 
 	// add block whose data is addBlockBody.Message
 	blockchain.StoreBlockchain().AddStoreBlock(addStoreBlockBody.Address, addStoreBlockBody.PrivateKey, addStoreBlockBody.PhoneNumber)
@@ -211,7 +221,11 @@ func baljagukBlocks(rw http.ResponseWriter, r *http.Request) {
 		// // send pointers and set variable a posted data
 		// utils.HandleErr(json.NewDecoder(r.Body).Decode(&addBlockBody))
 
-		// add block whose data is addBlockBody.Message
+		// add block whose dat`a is addBlockBody.Message
+		if addBaljagukBlockBody.UserHash == "" && addBaljagukBlockBody.StoreHash == "" {
+			rw.WriteHeader(http.StatusNoContent)
+			return
+		}
 		blockchain.BaljagukBlockchain().AddBaljagukBlock(addBaljagukBlockBody.StoreHash, addBaljagukBlockBody.UserHash)
 
 		// p2p.BroadcastNewBlock(newBlock)
