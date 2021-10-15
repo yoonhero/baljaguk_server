@@ -6,7 +6,13 @@ import "github.com/yoonhero/baljaguk_server/utils"
 var user_b *blockchain
 
 // add block to blockchain
-func (b *blockchain) AddUserBlock(data UserData) *UserBlock {
+func (b *blockchain) AddUserBlock(Address string, PrivateKey string, PhoneNumber string, Email string) *UserBlock {
+	data := UserData{
+		Address:     Address,
+		PrivateKey:  PrivateKey,
+		PhoneNumber: PhoneNumber,
+		Email:       Email,
+	}
 	// createBlock
 	block := createUserBlock(b.NewestHash, b.Height+1, getUserDifficulty(b), data)
 
@@ -62,13 +68,7 @@ func UserBlockchain() *blockchain {
 
 		if checkpoint == nil {
 			// if blockchain don't exist create block
-			userdata := UserData{
-				Address:     "",
-				PrivateKey:  "",
-				PhoneNumber: "",
-				Email:       "",
-			}
-			user_b.AddUserBlock(userdata)
+			user_b.AddUserBlock("", "", "", "")
 		} else {
 			// restore data from db
 			user_b.restore(checkpoint)
