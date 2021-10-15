@@ -26,9 +26,7 @@ func (u url) MarshalText() ([]byte, error) {
 	return []byte(url), nil
 }
 
-//`json:"name"` => return name not Name
-//'json:"omitempty"` => don't send if field is empty
-// url, method, description, payload in type URLDescription struct
+//////////////////////////////// Http Decode Structure //////////////////////////////////
 type urlDescription struct {
 	URL         url    `json:"url"`
 	Method      string `json:"method"`
@@ -36,25 +34,8 @@ type urlDescription struct {
 	Payload     string `json:"payload,omitempty"`
 }
 
-// URLDescription all string to return value
-// func (u URLDescription) String() string {
-// 	return "Hello I'm the URL Description"
-// }
-
-// // Addblockbody struct
-// // which used when post a data
-// // data looks like
-// // {"message": "data"}
-// type addBlockBody struct {
-// 	Message string `json:"message"`
-// }
-
 type errorResponse struct {
 	ErrorMessage string `json:"errorMessage"`
-}
-
-type addBlockBody struct {
-	From string `json:"from"`
 }
 
 type addUserBlockBody struct {
@@ -236,7 +217,7 @@ func baljagukBlocks(rw http.ResponseWriter, r *http.Request) {
 
 }
 
-func block(rw http.ResponseWriter, r *http.Request) {
+func findUser(rw http.ResponseWriter, r *http.Request) {
 	// get mux var from http.Request
 	// shape looks like
 	// map[id:1]
@@ -253,6 +234,34 @@ func block(rw http.ResponseWriter, r *http.Request) {
 
 	// FindBlock by id
 	block, err := blockchain.FindUserBlock(hash)
+
+	encoder := json.NewEncoder(rw)
+
+	// if err founded
+	if err == blockchain.ErrNotFound {
+		// format err to string
+		encoder.Encode(errorResponse{fmt.Sprint(err)})
+	} else {
+		// send the block
+		encoder.Encode(block)
+	}
+
+}
+
+func findStore(rw http.ResponseWriter, r *http.Request) {
+	// get mux var from http.Request
+	// shape looks like
+	// map[id:1]
+	vars := mux.Vars(r)
+
+	// get only id
+	// id := vars["height"]
+
+	// strconv.Atoi convert string to int
+	hash := vars["hash"]
+
+	// FindBlock by id
+	block, err := blockchain.FindStoreBlock(hash)
 
 	encoder := json.NewEncoder(rw)
 
@@ -320,23 +329,20 @@ func createKey(rw http.ResponseWriter, r *http.Request) {
 
 func Start(aPort int) {
 	port = fmt.Sprintf(":%d", aPort)
-	// use NewServeMux() to fix the err
-	// which occurs when we try to run various http server
 	router := mux.NewRouter()
+
 	// add json content type
 	router.Use(jsonContentTypeMiddleWare, loggerMiddleWare)
-	// when  get or post "/" url
+
 	router.HandleFunc("/", documentation).Methods("GET")
 	router.HandleFunc("/status", status).Methods("GET")
 
-	// when get or post "/blocks" url
 	router.HandleFunc("/userblock", userBlocks).Methods("POST")
 	router.HandleFunc("/storeblock", storeBlocks).Methods("POST")
 	router.HandleFunc("/baljaguks", baljagukBlocks)
 
-	// get parameter using mux
-	router.HandleFunc("/baljaguk/{username:[a-f0-9]+}", block).Methods("GET")
-	// router.HandleFunc("/baljaguk/{storename:[a-f0-9]+}", block).Methods("GET")
+	router.HandleFunc("/store/{hash:[a-f0-9]+}", findStore).Methods("GET")
+	router.HandleFunc("/user/{hash:[a-f0-9]+}", findUser).Methods("GET")
 
 	router.HandleFunc("/wallet", myWallet).Methods("POST")
 	router.HandleFunc("/createkey", createKey).Methods("GET")
