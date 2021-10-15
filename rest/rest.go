@@ -26,7 +26,7 @@ func (u url) MarshalText() ([]byte, error) {
 	if !utils.IsHeroku() {
 		url = fmt.Sprintf("http://localhost%s%s", port, u)
 	} else {
-		url = "https://baljaguk.herokuapp.com"
+		url = fmt.Sprintf("https://baljaguk.herokuapp.com%s", u)
 	}
 	return []byte(url), nil
 }
