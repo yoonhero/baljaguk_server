@@ -34,7 +34,7 @@ func home(rw http.ResponseWriter, r *http.Request) {
 	// set data
 	// pagetitle is "Home"
 	// Blocks is blockchain's allblocks
-	var blocks []*blockchain.Block
+	var blocks []*blockchain.BaljagukBlock
 	for _, v := range blockchain.BaljagukBlocks(blockchain.BaljagukBlockchain()) {
 		h := fmt.Sprintf("%s", v.Hash[0:7]) + "..."
 		v.Hash = h
@@ -75,7 +75,7 @@ func add(rw http.ResponseWriter, r *http.Request) {
 		// data := r.Form.Get("blockData")
 
 		// addblock data is data from r.Form.Get("blockchain")
-		blockchain.BaljagukBlockchain().AddBaljagukBlock("")
+		blockchain.BaljagukBlockchain().AddBaljagukBlock("", "")
 
 		// redirect http
 		// writer is http.ResponseWrite

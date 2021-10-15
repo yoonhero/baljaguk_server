@@ -70,6 +70,11 @@ type addStoreBlockBody struct {
 	PhoneNumber string `json:"phoneNumber"`
 }
 
+type addBaljagukBlockBody struct {
+	StoreHash string `json:"storehash"`
+	UserHash  string `json:"userhash"`
+}
+
 type walletPayload struct {
 	Key string `json:"key"`
 }
@@ -196,8 +201,8 @@ func baljagukBlocks(rw http.ResponseWriter, r *http.Request) {
 
 		// when POST
 	case "POST":
-		var addBlockBody addBlockBody
-		json.NewDecoder(r.Body).Decode(&addBlockBody)
+		var addBaljagukBlockBody addBaljagukBlockBody
+		json.NewDecoder(r.Body).Decode(&addBaljagukBlockBody)
 		// {"message":"myblockdata"}
 
 		// // new variable struct AddBlockBody
@@ -207,7 +212,7 @@ func baljagukBlocks(rw http.ResponseWriter, r *http.Request) {
 		// utils.HandleErr(json.NewDecoder(r.Body).Decode(&addBlockBody))
 
 		// add block whose data is addBlockBody.Message
-		blockchain.BaljagukBlockchain().AddBaljagukBlock(addBlockBody.From)
+		blockchain.BaljagukBlockchain().AddBaljagukBlock(addBaljagukBlockBody.StoreHash, addBaljagukBlockBody.UserHash)
 
 		// p2p.BroadcastNewBlock(newBlock)
 
