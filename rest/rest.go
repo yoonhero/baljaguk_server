@@ -133,86 +133,53 @@ func documentation(rw http.ResponseWriter, r *http.Request) {
 func userBlocks(rw http.ResponseWriter, r *http.Request) {
 	var addUserBlockBody addUserBlockBody
 	json.NewDecoder(r.Body).Decode(&addUserBlockBody)
-	// {"message":"myblockdata"}
-
-	// // new variable struct AddBlockBody
-	// var addBlockBody addBlockBody
-
-	// // send pointers and set variable a posted data
-	// utils.HandleErr(json.NewDecoder(r.Body).Decode(&addBlockBody))
 
 	if addUserBlockBody.Address == "" && addUserBlockBody.PrivateKey == "" && addUserBlockBody.PhoneNumber == "" && addUserBlockBody.Email == "" {
 		rw.WriteHeader(http.StatusNoContent)
 		return
 	}
 
-	// add block whose data is addBlockBody.Message
 	blockchain.UserBlockchain().AddUserBlock(addUserBlockBody.Address, addUserBlockBody.PrivateKey, addUserBlockBody.PhoneNumber, addUserBlockBody.Email)
-
-	// p2p.BroadcastNewBlock(newBlock)
 
 	// send a 201 sign
 	rw.WriteHeader(http.StatusCreated)
 }
 
-// when get or post url /userblock
+// when get or post url /storeblock
 func storeBlocks(rw http.ResponseWriter, r *http.Request) {
 	var addStoreBlockBody addStoreBlockBody
 	json.NewDecoder(r.Body).Decode(&addStoreBlockBody)
-	// {"message":"myblockdata"}
-
-	// // new variable struct AddBlockBody
-	// var addBlockBody addBlockBody
-
-	// // send pointers and set variable a posted data
-	// utils.HandleErr(json.NewDecoder(r.Body).Decode(&addBlockBody))
 
 	if addStoreBlockBody.Address == "" && addStoreBlockBody.PrivateKey == "" && addStoreBlockBody.PhoneNumber == "" {
 		rw.WriteHeader(http.StatusNoContent)
 		return
 	}
 
-	// add block whose data is addBlockBody.Message
 	blockchain.StoreBlockchain().AddStoreBlock(addStoreBlockBody.Address, addStoreBlockBody.PrivateKey, addStoreBlockBody.PhoneNumber)
-
-	// p2p.BroadcastNewBlock(newBlock)
 
 	// send a 201 sign
 	rw.WriteHeader(http.StatusCreated)
 
 }
 
-// when get or post url /userblock
+// when get or post url /baljaguks
 func baljagukBlocks(rw http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	// when GET
 	case "GET":
-		// recognize that this content is json
-		// rw.Header().Add("Content-Type", "application/json")
-
 		// send all blocks
 		utils.HandleErr(json.NewEncoder(rw).Encode(blockchain.BaljagukBlocks(blockchain.BaljagukBlockchain())))
 
-		// when POST
+	// when POST
 	case "POST":
 		var addBaljagukBlockBody addBaljagukBlockBody
 		json.NewDecoder(r.Body).Decode(&addBaljagukBlockBody)
-		// {"message":"myblockdata"}
 
-		// // new variable struct AddBlockBody
-		// var addBlockBody addBlockBody
-
-		// // send pointers and set variable a posted data
-		// utils.HandleErr(json.NewDecoder(r.Body).Decode(&addBlockBody))
-
-		// add block whose dat`a is addBlockBody.Message
 		if addBaljagukBlockBody.UserHash == "" && addBaljagukBlockBody.StoreHash == "" && addBaljagukBlockBody.Latitude == "" && addBaljagukBlockBody.Longitude == "" {
 			rw.WriteHeader(http.StatusNoContent)
 			return
 		}
 		blockchain.BaljagukBlockchain().AddBaljagukBlock(addBaljagukBlockBody.StoreHash, addBaljagukBlockBody.UserHash, addBaljagukBlockBody.Latitude, addBaljagukBlockBody.Longitude)
-
-		// p2p.BroadcastNewBlock(newBlock)
 
 		// send a 201 sign
 		rw.WriteHeader(http.StatusCreated)
@@ -221,26 +188,14 @@ func baljagukBlocks(rw http.ResponseWriter, r *http.Request) {
 }
 
 func findUser(rw http.ResponseWriter, r *http.Request) {
-	// get mux var from http.Request
-	// shape looks like
-	// map[id:1]
 	vars := mux.Vars(r)
-
-	// get only id
-	// id := vars["height"]
-
-	// strconv.Atoi convert string to int
 	hash := vars["hash"]
 
-	// handle err
-	// utils.HandleErr(err)
-
-	// FindBlock by id
+	// FindBlock by Hash
 	block, err := blockchain.FindUserBlock(hash)
 
 	encoder := json.NewEncoder(rw)
 
-	// if err founded
 	if err == blockchain.ErrNotFound {
 		// format err to string
 		encoder.Encode(errorResponse{fmt.Sprint(err)})
@@ -252,23 +207,14 @@ func findUser(rw http.ResponseWriter, r *http.Request) {
 }
 
 func findStore(rw http.ResponseWriter, r *http.Request) {
-	// get mux var from http.Request
-	// shape looks like
-	// map[id:1]
 	vars := mux.Vars(r)
-
-	// get only id
-	// id := vars["height"]
-
-	// strconv.Atoi convert string to int
 	hash := vars["hash"]
 
-	// FindBlock by id
+	// FindBlock by Hash
 	block, err := blockchain.FindStoreBlock(hash)
 
 	encoder := json.NewEncoder(rw)
 
-	// if err founded
 	if err == blockchain.ErrNotFound {
 		// format err to string
 		encoder.Encode(errorResponse{fmt.Sprint(err)})
@@ -276,7 +222,6 @@ func findStore(rw http.ResponseWriter, r *http.Request) {
 		// send the block
 		encoder.Encode(block)
 	}
-
 }
 
 // func add json content type
@@ -306,7 +251,6 @@ func status(rw http.ResponseWriter, r *http.Request) {
 func myWallet(rw http.ResponseWriter, r *http.Request) {
 	var payload walletPayload
 	json.NewDecoder(r.Body).Decode(&payload)
-	// json.NewEncoder(rw).Encode(myWalletResponse{Address: address})
 	bytes, err := hex.DecodeString(payload.Key)
 	utils.HandleErr(err)
 	json.NewEncoder(rw).Encode(wallet.RestApiWallet(bytes))
@@ -317,18 +261,6 @@ func createKey(rw http.ResponseWriter, r *http.Request) {
 	address, key := wallet.RestApiCreatePrivKey()
 	utils.HandleErr(json.NewEncoder(rw).Encode(createKeyAddressPayload{address, fmt.Sprintf("%x", key)}))
 }
-
-// func peers(rw http.ResponseWriter, r *http.Request) {
-// 	switch r.Method {
-// 	case "POST":
-// 		var payload addPeerPayload
-// 		json.NewDecoder(r.Body).Decode(&payload)
-// 		p2p.AddPeer(payload.Address, payload.Port, port[1:], true)
-// 		rw.WriteHeader(http.StatusOK)
-// 	case "GET":
-// 		json.NewEncoder(rw).Encode(p2p.AllPeers(&p2p.Peers))
-// 	}
-// }
 
 func Start(aPort int) {
 	port = fmt.Sprintf(":%d", aPort)
