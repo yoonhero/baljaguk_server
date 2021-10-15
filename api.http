@@ -8,5 +8,14 @@ POST http://localhost:4000/userblock
 }
 
 ###
+POST http://localhost:4000/storeblock
+
+{
+  "address":"50543abadb1f5a396b641fdd8a59aca820f0b8fc997451085817f5dae21c814dad1e4f34c9d0f20a2306ea99cbc115bb3e7e477e71a58e2c810fe0742bbe5d8c",
+  "privateKey":"3077020101042036184d9bbc4e5f2e77ee437b4d876e62db07967122532dfaf8c02aad58f91a1ea00a06082a8648ce3d030107a1440342000450543abadb1f5a396b641fdd8a59aca820f0b8fc997451085817f5dae21c814dad1e4f34c9d0f20a2306ea99cbc115bb3e7e477e71a58e2c810fe0742bbe5d8c",
+  "phoneNumber":"1234-5678-9101"
+}
+
+###
 http://localhost:4000/createkey
 

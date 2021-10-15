@@ -6,9 +6,14 @@ import "github.com/yoonhero/baljaguk_server/utils"
 var store_b *blockchain
 
 // add block to blockchain
-func (b *blockchain) AddStoreBlock(from string) *Block {
+func (b *blockchain) AddStoreBlock(Address string, PrivateKey string, PhoneNumber string) *StoreBlock {
+	data := StoreData{
+		Address:     Address,
+		PrivateKey:  PrivateKey,
+		PhoneNumber: PhoneNumber,
+	}
 	// createBlock
-	block := createStoreBlock(b.NewestHash, b.Height+1, getStoreDifficulty(b), from)
+	block := createStoreBlock(b.NewestHash, b.Height+1, getStoreDifficulty(b), data)
 
 	// set newesthash new block's hash
 	b.NewestHash = block.Hash
@@ -23,10 +28,10 @@ func (b *blockchain) AddStoreBlock(from string) *Block {
 }
 
 // all blocks
-func StoreBlocks(b *blockchain) []*Block {
+func StoreBlocks(b *blockchain) []*StoreBlock {
 	b.m.Lock()
 	defer b.m.Unlock()
-	var blocks []*Block
+	var blocks []*StoreBlock
 
 	// start newesthash and its prevhash and find block
 	// if prevhash dont exist = genesis block break
@@ -62,7 +67,7 @@ func StoreBlockchain() *blockchain {
 
 		if checkpoint == nil {
 			// if blockchain don't exist create block
-			store_b.AddStoreBlock("")
+			store_b.AddStoreBlock("", "", "")
 		} else {
 			// restore data from db
 			store_b.restore(checkpoint)

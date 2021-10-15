@@ -21,11 +21,6 @@ type Block struct {
 	Difficulty int    `json:"difficulty"`
 	Nonce      int    `json:"nonce"`
 	Timestamp  int    `json:"timestamp"`
-
-	Address     string `json:"address"`
-	PrivateKey  string `json:"privateKey"`
-	PhoneNumber string `json:"phoneNumber"`
-	Email       string `json:"email"`
 }
 
 var ErrNotFound = errors.New("Block not Found")

@@ -64,6 +64,12 @@ type addUserBlockBody struct {
 	Email       string `json:"email"`
 }
 
+type addStoreBlockBody struct {
+	Address     string `json:"address"`
+	PrivateKey  string `json:"privateKey"`
+	PhoneNumber string `json:"phoneNumber"`
+}
+
 type walletPayload struct {
 	Key string `json:"key"`
 }
@@ -157,8 +163,8 @@ func userBlocks(rw http.ResponseWriter, r *http.Request) {
 
 // when get or post url /userblock
 func storeBlocks(rw http.ResponseWriter, r *http.Request) {
-	var addBlockBody addBlockBody
-	json.NewDecoder(r.Body).Decode(&addBlockBody)
+	var addStoreBlockBody addStoreBlockBody
+	json.NewDecoder(r.Body).Decode(&addStoreBlockBody)
 	// {"message":"myblockdata"}
 
 	// // new variable struct AddBlockBody
@@ -168,7 +174,7 @@ func storeBlocks(rw http.ResponseWriter, r *http.Request) {
 	// utils.HandleErr(json.NewDecoder(r.Body).Decode(&addBlockBody))
 
 	// add block whose data is addBlockBody.Message
-	blockchain.StoreBlockchain().AddStoreBlock(addBlockBody.From)
+	blockchain.StoreBlockchain().AddStoreBlock(addStoreBlockBody.Address, addStoreBlockBody.PrivateKey, addStoreBlockBody.PhoneNumber)
 
 	// p2p.BroadcastNewBlock(newBlock)
 
