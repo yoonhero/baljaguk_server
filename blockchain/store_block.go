@@ -1,6 +1,7 @@
 package blockchain
 
 import (
+	"errors"
 	"strings"
 	"time"
 
@@ -69,6 +70,24 @@ func FindStoreBlock(hash string) (*StoreBlock, error) {
 	block.restore(blockBytes)
 
 	return block, nil
+}
+
+// find store by address
+func FindUserStoreByAddress(address string) ([]*StoreBlock, error) {
+	blocks := StoreBlocks(StoreBlockchain())
+	var results []*StoreBlock
+
+	for _, block := range blocks {
+		if block.Address == address {
+			results = append(results, block)
+		}
+	}
+
+	if len(results) == 0 {
+		return nil, errors.New("error to find userblock")
+	}
+
+	return results, nil
 }
 
 // create block
