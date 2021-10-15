@@ -22,7 +22,12 @@ type url string
 // type URL's interface
 func (u url) MarshalText() ([]byte, error) {
 	// var url is http://localhost + port + URL
-	url := fmt.Sprintf("http://localhost%s%s", port, u)
+	var url string
+	if !utils.IsHeroku() {
+		url = fmt.Sprintf("http://localhost%s%s", port, u)
+	} else {
+		url = "https://baljaguk.herokuapp.com"
+	}
 	return []byte(url), nil
 }
 

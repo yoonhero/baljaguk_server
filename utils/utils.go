@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"strings"
 )
 
@@ -65,4 +66,13 @@ func AllowConnection(w http.ResponseWriter) {
 
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 
+}
+
+func IsHeroku() bool {
+	port := os.Getenv("PORT")
+	if port == "" {
+		return false
+	}
+
+	return true
 }
