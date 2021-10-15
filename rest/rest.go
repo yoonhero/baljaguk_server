@@ -157,7 +157,6 @@ func userBlocks(rw http.ResponseWriter, r *http.Request) {
 
 // when get or post url /userblock
 func storeBlocks(rw http.ResponseWriter, r *http.Request) {
-
 	var addBlockBody addBlockBody
 	json.NewDecoder(r.Body).Decode(&addBlockBody)
 	// {"message":"myblockdata"}
