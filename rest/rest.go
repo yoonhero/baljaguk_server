@@ -102,7 +102,7 @@ func documentation(rw http.ResponseWriter, r *http.Request) {
 			Payload:     "{'storename':'','phone_number':'','address':''}",
 		},
 		{
-			URL:         url("/baljaguk?username='',storename=''"),
+			URL:         url("/baljaguks"),
 			Method:      "Get",
 			Description: "See A Baljaguk TimeLine Block",
 			Payload:     "query: username, storename",
@@ -112,6 +112,16 @@ func documentation(rw http.ResponseWriter, r *http.Request) {
 			Method:      "POST",
 			Description: "Add A Baljaguk Block",
 			Payload:     "{'store_id':'','user_id':'','timestamp':''}",
+		},
+		{
+			URL:         url("/user/[address]"),
+			Method:      "Get",
+			Description: "See Specific User Block By Address",
+		},
+		{
+			URL:         url("/store/[address]"),
+			Method:      "Get",
+			Description: "See Specific Store Block By Address",
 		},
 		{
 			URL:         url("/createkey"),
