@@ -306,7 +306,7 @@ func Start(aPort int) {
 
 	// get parameter using mux
 	router.HandleFunc("/baljaguk/{username:[a-f0-9]+}", block).Methods("GET")
-	router.HandleFunc("/baljaguk/{storename:[a-f0-9]+}", block).Methods("GET")
+	// router.HandleFunc("/baljaguk/{storename:[a-f0-9]+}", block).Methods("GET")
 
 	router.HandleFunc("/wallet", myWallet).Methods("POST")
 	router.HandleFunc("/createkey", createKey).Methods("GET")
