@@ -1,7 +1,6 @@
 package blockchain
 
 import (
-	"errors"
 	"strings"
 	"time"
 
@@ -84,7 +83,7 @@ func FindUserStoreByAddress(address string) ([]*StoreBlock, error) {
 	}
 
 	if len(results) == 0 {
-		return nil, errors.New("error to find userblock")
+		return nil, ErrNotFound
 	}
 
 	return results, nil
