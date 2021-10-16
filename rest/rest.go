@@ -246,6 +246,7 @@ func jsonContentTypeMiddleWare(next http.Handler) http.Handler {
 		// add content json type
 		utils.AllowConnection(rw)
 		rw.Header().Add("Content-Type", "application/json")
+		rw.Header().Add("Access-Control-Allow-Origin", "no-cors")
 		next.ServeHTTP(rw, r)
 	})
 }
