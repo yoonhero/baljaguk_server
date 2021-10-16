@@ -98,25 +98,24 @@ func documentation(rw http.ResponseWriter, r *http.Request) {
 			URL:         url("/userblocks"),
 			Method:      "POST",
 			Description: "Add A User Block",
-			Payload:     "{'username':'','phone_number':'','address':''}",
+			Payload:     "{'email':'','phoneNumber':'','address':'', 'privateKey':''}",
 		},
 		{
 			URL:         url("/storeblocks"),
 			Method:      "POST",
 			Description: "Add A Store Block",
-			Payload:     "{'storename':'','phone_number':'','address':''}",
+			Payload:     "{'phoneNumber':'','address':'', 'privateKey':''}",
 		},
 		{
 			URL:         url("/baljaguks"),
 			Method:      "Get",
 			Description: "See A Baljaguk TimeLine Block",
-			Payload:     "query: username, storename",
 		},
 		{
 			URL:         url("/baljaguks"),
 			Method:      "POST",
 			Description: "Add A Baljaguk Block",
-			Payload:     "{'store_id':'','user_id':'','timestamp':''}",
+			Payload:     "{'store_id':'','user_id':'','timestamp':'','latitude':'','longitude':''}",
 		},
 		{
 			URL:         url("/user/[address]"),
@@ -298,8 +297,8 @@ func Start(aPort int) {
 	router.HandleFunc("/", documentation).Methods("GET")
 	router.HandleFunc("/status", status).Methods("GET")
 
-	router.HandleFunc("/userblock", userBlocks).Methods("POST", "GET")
-	router.HandleFunc("/storeblock", storeBlocks).Methods("POST")
+	router.HandleFunc("/userblocks", userBlocks).Methods("POST", "GET")
+	router.HandleFunc("/storeblocks", storeBlocks).Methods("POST")
 	router.HandleFunc("/baljaguks", baljagukBlocks).Methods("POST", "GET")
 
 	router.HandleFunc("/store/{hash:[a-f0-9]+}", findStore).Methods("GET")
