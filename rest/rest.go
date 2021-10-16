@@ -146,18 +146,28 @@ func documentation(rw http.ResponseWriter, r *http.Request) {
 
 // when get or post url /userblock
 func userBlocks(rw http.ResponseWriter, r *http.Request) {
-	var addUserBlockBody addUserBlockBody
-	json.NewDecoder(r.Body).Decode(&addUserBlockBody)
 
-	if addUserBlockBody.Address == "" && addUserBlockBody.PrivateKey == "" && addUserBlockBody.PhoneNumber == "" && addUserBlockBody.Email == "" {
-		rw.WriteHeader(http.StatusNoContent)
-		return
+	switch r.Method {
+	// when GET
+	case "GET":
+		// send all blocks
+		utils.HandleErr(json.NewEncoder(rw).Encode(blockchain.UserBlocks(blockchain.UserBlockchain())))
+
+	// when POST
+	case "POST":
+		var addUserBlockBody addUserBlockBody
+		json.NewDecoder(r.Body).Decode(&addUserBlockBody)
+
+		if addUserBlockBody.Address == "" && addUserBlockBody.PrivateKey == "" && addUserBlockBody.PhoneNumber == "" && addUserBlockBody.Email == "" {
+			rw.WriteHeader(http.StatusNoContent)
+			return
+		}
+
+		blockchain.UserBlockchain().AddUserBlock(addUserBlockBody.Address, addUserBlockBody.PrivateKey, addUserBlockBody.PhoneNumber, addUserBlockBody.Email)
+
+		// send a 201 sign
+		rw.WriteHeader(http.StatusCreated)
 	}
-
-	blockchain.UserBlockchain().AddUserBlock(addUserBlockBody.Address, addUserBlockBody.PrivateKey, addUserBlockBody.PhoneNumber, addUserBlockBody.Email)
-
-	// send a 201 sign
-	rw.WriteHeader(http.StatusCreated)
 }
 
 // when get or post url /storeblock
@@ -288,9 +298,9 @@ func Start(aPort int) {
 	router.HandleFunc("/", documentation).Methods("GET")
 	router.HandleFunc("/status", status).Methods("GET")
 
-	router.HandleFunc("/userblock", userBlocks).Methods("POST")
+	router.HandleFunc("/userblock", userBlocks).Methods("POST", "GET")
 	router.HandleFunc("/storeblock", storeBlocks).Methods("POST")
-	router.HandleFunc("/baljaguks", baljagukBlocks)
+	router.HandleFunc("/baljaguks", baljagukBlocks).Methods("POST", "GET")
 
 	router.HandleFunc("/store/{hash:[a-f0-9]+}", findStore).Methods("GET")
 	router.HandleFunc("/user/{hash:[a-f0-9]+}", findUser).Methods("GET")
