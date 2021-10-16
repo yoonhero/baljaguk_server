@@ -43,7 +43,7 @@ var myints intslice
 
 // introduce usages
 func usage() {
-	fmt.Printf("Welcome to 오감자 코인 \n")
+	fmt.Printf("Welcome to 발자국을 남겨요 \n")
 	fmt.Printf("Please use the following commands: \n\n")
 	fmt.Printf("-port=4000:           Start the PORT of the server\n")
 	fmt.Printf("-mode=rest:           Choose between 'html' or 'rest' \n\n")
