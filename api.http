@@ -1,4 +1,4 @@
-POST http://localhost:4000/userblock
+POST https://baljaguk.herokuapp.com/userblock
 
 {
   "address":"f1f21a5f24d0fdf5b4f4a5585c49271967996eddb0af25a9153b650d1bb375b2e32111b346fe9d59648661643bba3ae30c3bd5446d0e56b65a6d20ab2b2919d5",
@@ -21,7 +21,9 @@ POST http://localhost:4000/baljaguks
 
 {
   "userhash":"f1f21a5f24d0fdf5b4f4a5585c49271967996eddb0af25a9153b650d1bb375b2e32111b346fe9d59648661643bba3ae30c3bd5446d0e56b65a6d20ab2b2919d5",
-  "storehash":"50543abadb1f5a396b641fdd8a59aca820f0b8fc997451085817f5dae21c814dad1e4f34c9d0f20a2306ea99cbc115bb3e7e477e71a58e2c810fe0742bbe5d8c"
+  "storehash":"50543abadb1f5a396b641fdd8a59aca820f0b8fc997451085817f5dae21c814dad1e4f34c9d0f20a2306ea99cbc115bb3e7e477e71a58e2c810fe0742bbe5d8c",
+  "latitude":"37.198181",
+  "longitude":"127.074224"
 }
 
 

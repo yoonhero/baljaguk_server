@@ -171,18 +171,27 @@ func userBlocks(rw http.ResponseWriter, r *http.Request) {
 
 // when get or post url /storeblock
 func storeBlocks(rw http.ResponseWriter, r *http.Request) {
-	var addStoreBlockBody addStoreBlockBody
-	json.NewDecoder(r.Body).Decode(&addStoreBlockBody)
+	switch r.Method {
+	// when GET
+	case "GET":
+		// send all blocks
+		utils.HandleErr(json.NewEncoder(rw).Encode(blockchain.StoreBlocks(blockchain.StoreBlockchain())))
 
-	if addStoreBlockBody.Address == "" && addStoreBlockBody.PrivateKey == "" && addStoreBlockBody.PhoneNumber == "" {
-		rw.WriteHeader(http.StatusNoContent)
-		return
+	// when POST
+	case "POST":
+		var addStoreBlockBody addStoreBlockBody
+		json.NewDecoder(r.Body).Decode(&addStoreBlockBody)
+
+		if addStoreBlockBody.Address == "" && addStoreBlockBody.PrivateKey == "" && addStoreBlockBody.PhoneNumber == "" {
+			rw.WriteHeader(http.StatusNoContent)
+			return
+		}
+
+		blockchain.StoreBlockchain().AddStoreBlock(addStoreBlockBody.Address, addStoreBlockBody.PrivateKey, addStoreBlockBody.PhoneNumber)
+
+		// send a 201 sign
+		rw.WriteHeader(http.StatusCreated)
 	}
-
-	blockchain.StoreBlockchain().AddStoreBlock(addStoreBlockBody.Address, addStoreBlockBody.PrivateKey, addStoreBlockBody.PhoneNumber)
-
-	// send a 201 sign
-	rw.WriteHeader(http.StatusCreated)
 
 }
 
