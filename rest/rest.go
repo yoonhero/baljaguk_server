@@ -307,7 +307,7 @@ func Start(aPort int) {
 	router.HandleFunc("/status", status).Methods("GET")
 
 	router.HandleFunc("/userblocks", userBlocks).Methods("POST", "GET")
-	router.HandleFunc("/storeblocks", storeBlocks).Methods("POST")
+	router.HandleFunc("/storeblocks", storeBlocks).Methods("POST", "GET")
 	router.HandleFunc("/baljaguks", baljagukBlocks).Methods("POST", "GET")
 
 	router.HandleFunc("/store/{hash:[a-f0-9]+}", findStore).Methods("GET")
