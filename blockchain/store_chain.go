@@ -7,6 +7,9 @@ var store_b *blockchain
 
 // add block to blockchain
 func (b *blockchain) AddStoreBlock(Address string, PrivateKey string, PhoneNumber string) *StoreBlock {
+	b.m.Lock()
+	defer b.m.Unlock()
+
 	data := StoreData{
 		Address:     Address,
 		PrivateKey:  PrivateKey,
@@ -29,8 +32,8 @@ func (b *blockchain) AddStoreBlock(Address string, PrivateKey string, PhoneNumbe
 
 // all blocks
 func StoreBlocks(b *blockchain) []*StoreBlock {
-	// b.m.Lock()
-	// defer b.m.Unlock()
+	b.m.Lock()
+	defer b.m.Unlock()
 	var blocks []*StoreBlock
 
 	// start newesthash and its prevhash and find block
@@ -104,7 +107,7 @@ func getStoreDifficulty(b *blockchain) int {
 		return defaultDifficulty
 	} else if b.Height%difficultyInterval == 0 {
 		// recalculate the difficulty
-		return recalculateUserDifficulty(b)
+		return recalculateStoreDifficulty(b)
 	} else {
 		if b.CurrentDifficulty <= 5 {
 			return b.CurrentDifficulty

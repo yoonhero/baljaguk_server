@@ -7,6 +7,9 @@ var user_b *blockchain
 
 // add block to blockchain
 func (b *blockchain) AddUserBlock(Address string, PrivateKey string, PhoneNumber string, Email string) *UserBlock {
+	b.m.Lock()
+	defer b.m.Unlock()
+
 	data := UserData{
 		Address:     Address,
 		PrivateKey:  PrivateKey,
@@ -30,8 +33,8 @@ func (b *blockchain) AddUserBlock(Address string, PrivateKey string, PhoneNumber
 
 // all blocks
 func UserBlocks(b *blockchain) []*UserBlock {
-	// b.m.Lock()
-	// defer b.m.Unlock()
+	b.m.Lock()
+	defer b.m.Unlock()
 	var blocks []*UserBlock
 
 	// start newesthash and its prevhash and find block
