@@ -1,14 +1,43 @@
 package blockchain
 
-import "github.com/yoonhero/baljaguk_server/utils"
+import (
+	"sync"
 
-// variable blockchain pointers
-var baljaguk_b *blockchain
+	"github.com/yoonhero/baljaguk_server/db"
+	"github.com/yoonhero/baljaguk_server/utils"
+)
 
-// add block to blockchain
-func (b *blockchain) AddBaljagukBlock(StoreHash string, UserHash string, Latitude string, Longitude string) *BaljagukBlock {
+var baljagukDBStorage storage = db.DB{}
+
+// variable struct that play func only one time
+var baljagukOnce sync.Once
+
+// type blockchain
+// blocks is slice of []Block
+type baljagukBlockchain struct {
+	NewestHash        string `json:"newestHash"`
+	Height            int    `json:"height"`
+	CurrentDifficulty int    `json:"currentDifficulty"`
+	m                 sync.Mutex
+}
+
+func (b *baljagukBlockchain) LockBlockchain() {
 	b.m.Lock()
 	defer b.m.Unlock()
+}
+
+func (b *baljagukBlockchain) restore(data []byte) {
+	// decoder := gob.NewDecoder(bytes.NewReader(data))
+	// decoder.Decode(b)
+	utils.FromBytes(b, data)
+}
+
+// variable blockchain pointers
+var baljaguk_b *baljagukBlockchain
+
+// add block to blockchain
+func (b *baljagukBlockchain) AddBaljagukBlock(StoreHash string, UserHash string, Latitude string, Longitude string) *BaljagukBlock {
+	b.LockBlockchain()
 
 	data := BaljagukData{
 		StoreHash: StoreHash,
@@ -32,9 +61,8 @@ func (b *blockchain) AddBaljagukBlock(StoreHash string, UserHash string, Latitud
 }
 
 // all blocks
-func BaljagukBlocks(b *blockchain) []*BaljagukBlock {
-	b.m.Lock()
-	defer b.m.Unlock()
+func BaljagukBlocks(b *baljagukBlockchain) []*BaljagukBlock {
+	b.LockBlockchain()
 
 	var blocks []*BaljagukBlock
 
@@ -55,20 +83,20 @@ func BaljagukBlocks(b *blockchain) []*BaljagukBlock {
 }
 
 // persist the blockchain data
-func persistBaljagukBlockchain(b *blockchain) {
+func persistBaljagukBlockchain(b *baljagukBlockchain) {
 	// db.SaveCheckpoint(utils.ToBytes(b))
-	dbStorage.SaveBaljagukChain((utils.ToBytes(b)))
+	baljagukDBStorage.SaveBaljagukChain((utils.ToBytes(b)))
 }
 
-func BaljagukBlockchain() *blockchain {
+func BaljagukBlockchain() *baljagukBlockchain {
 	// run only one time
-	once.Do(func() {
+	baljagukOnce.Do(func() {
 		// initial blockchain struct
-		baljaguk_b = &blockchain{Height: 0}
+		baljaguk_b = &baljagukBlockchain{Height: 0}
 
 		// search for checkpoint on the db
 		// checkpoint := db.Checkpoint()
-		checkpoint := dbStorage.LoadBaljagukChain()
+		checkpoint := baljagukDBStorage.LoadBaljagukChain()
 
 		if checkpoint == nil {
 			// if blockchain don't exist create block
@@ -83,7 +111,7 @@ func BaljagukBlockchain() *blockchain {
 }
 
 // recalculate difficulty of block by timestamp
-func recalculateBaljagukDifficulty(b *blockchain) int {
+func recalculateBaljagukDifficulty(b *baljagukBlockchain) int {
 	// get all blocks
 	allBlocks := BaljagukBlocks(b)
 	newestBlock := allBlocks[0]
@@ -103,7 +131,7 @@ func recalculateBaljagukDifficulty(b *blockchain) int {
 	return b.CurrentDifficulty
 }
 
-func getBaljagukDifficulty(b *blockchain) int {
+func getBaljagukDifficulty(b *baljagukBlockchain) int {
 	// if genesis block or not
 	if b.Height == 0 {
 		return defaultDifficulty

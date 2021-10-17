@@ -52,13 +52,13 @@ func (b *UserBlock) restore(data []byte) {
 // persist data
 func persistUserBlock(b *UserBlock) {
 	// db.SaveBlock(b.Hash, utils.ToBytes(b))
-	dbStorage.SaveUserBlock(b.Hash, utils.ToBytes(b))
+	userDBStorage.SaveUserBlock(b.Hash, utils.ToBytes(b))
 }
 
 // find block by hash
 func FindUserBlock(hash string) (*UserBlock, error) {
 	// blockBytes := db.Block(hash)
-	blockBytes := dbStorage.FindUserBlock(hash)
+	blockBytes := userDBStorage.FindUserBlock(hash)
 
 	// if that block don't exist
 	if blockBytes == nil {
@@ -74,21 +74,16 @@ func FindUserBlock(hash string) (*UserBlock, error) {
 }
 
 // find block by address
-func FindUserBlockByAddress(address string) ([]*UserBlock, error) {
+func FindUserBlockByAddress(address string) *UserBlock {
 	blocks := UserBlocks(UserBlockchain())
-	var results []*UserBlock
 
 	for _, block := range blocks {
 		if block.Address == address {
-			results = append(results, block)
+			return block
 		}
 	}
 
-	if len(results) == 0 {
-		return nil, ErrNotFound
-	}
-
-	return results, nil
+	return nil
 }
 
 // create block

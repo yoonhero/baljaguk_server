@@ -6,9 +6,7 @@ package blockchain
 import (
 	"encoding/json"
 	"net/http"
-	"sync"
 
-	"github.com/yoonhero/baljaguk_server/db"
 	"github.com/yoonhero/baljaguk_server/utils"
 )
 
@@ -18,15 +16,6 @@ const (
 	blockInterval      int = 1
 	allowedRange       int = 2
 )
-
-// type blockchain
-// blocks is slice of []Block
-type blockchain struct {
-	NewestHash        string `json:"newestHash"`
-	Height            int    `json:"height"`
-	CurrentDifficulty int    `json:"currentDifficulty"`
-	m                 sync.Mutex
-}
 
 type storage interface {
 	FindUserBlock(hash string) []byte
@@ -44,23 +33,7 @@ type storage interface {
 	DeleteAllBlocks()
 }
 
-// variable struct that play func only one time
-var once sync.Once
-
-var dbStorage storage = db.DB{}
-
-func (b *blockchain) LockBlockchain() {
-	b.m.Lock()
-	defer b.m.Unlock()
-}
-
-func (b *blockchain) restore(data []byte) {
-	// decoder := gob.NewDecoder(bytes.NewReader(data))
-	// decoder.Decode(b)
-	utils.FromBytes(b, data)
-}
-
-func Status(b *blockchain, rw http.ResponseWriter) {
+func Status(b *baljagukBlockchain, rw http.ResponseWriter) {
 	b.m.Lock()
 	defer b.m.Unlock()
 

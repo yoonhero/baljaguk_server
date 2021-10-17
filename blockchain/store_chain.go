@@ -1,14 +1,43 @@
 package blockchain
 
-import "github.com/yoonhero/baljaguk_server/utils"
+import (
+	"sync"
 
-// variable blockchain pointers
-var store_b *blockchain
+	"github.com/yoonhero/baljaguk_server/db"
+	"github.com/yoonhero/baljaguk_server/utils"
+)
 
-// add block to blockchain
-func (b *blockchain) AddStoreBlock(Address string, PrivateKey string, PhoneNumber string) *StoreBlock {
+var storeDBStorage storage = db.DB{}
+
+// variable struct that play func only one time
+var storeOnce sync.Once
+
+// type blockchain
+// blocks is slice of []Block
+type storeBlockchain struct {
+	NewestHash        string `json:"newestHash"`
+	Height            int    `json:"height"`
+	CurrentDifficulty int    `json:"currentDifficulty"`
+	m                 sync.Mutex
+}
+
+func (b *storeBlockchain) LockBlockchain() {
 	b.m.Lock()
 	defer b.m.Unlock()
+}
+
+func (b *storeBlockchain) restore(data []byte) {
+	// decoder := gob.NewDecoder(bytes.NewReader(data))
+	// decoder.Decode(b)
+	utils.FromBytes(b, data)
+}
+
+// variable blockchain pointers
+var store_b *storeBlockchain
+
+// add block to blockchain
+func (b *storeBlockchain) AddStoreBlock(Address string, PrivateKey string, PhoneNumber string) *StoreBlock {
+	b.LockBlockchain()
 
 	data := StoreData{
 		Address:     Address,
@@ -31,9 +60,8 @@ func (b *blockchain) AddStoreBlock(Address string, PrivateKey string, PhoneNumbe
 }
 
 // all blocks
-func StoreBlocks(b *blockchain) []*StoreBlock {
-	b.m.Lock()
-	defer b.m.Unlock()
+func StoreBlocks(b *storeBlockchain) []*StoreBlock {
+	b.LockBlockchain()
 	var blocks []*StoreBlock
 
 	// start newesthash and its prevhash and find block
@@ -53,20 +81,20 @@ func StoreBlocks(b *blockchain) []*StoreBlock {
 }
 
 // persist the blockchain data
-func persistStoreBlockchain(b *blockchain) {
+func persistStoreBlockchain(b *storeBlockchain) {
 	// db.SaveCheckpoint(utils.ToBytes(b))
-	dbStorage.SaveStoreChain((utils.ToBytes(b)))
+	storeDBStorage.SaveStoreChain((utils.ToBytes(b)))
 }
 
-func StoreBlockchain() *blockchain {
+func StoreBlockchain() *storeBlockchain {
 	// run only one time
-	once.Do(func() {
+	storeOnce.Do(func() {
 		// initial blockchain struct
-		store_b = &blockchain{Height: 0}
+		store_b = &storeBlockchain{Height: 0}
 
 		// search for checkpoint on the db
 		// checkpoint := db.Checkpoint()
-		checkpoint := dbStorage.LoadStoreChain()
+		checkpoint := storeDBStorage.LoadStoreChain()
 
 		if checkpoint == nil {
 			// if blockchain don't exist create block
@@ -81,7 +109,7 @@ func StoreBlockchain() *blockchain {
 }
 
 // recalculate difficulty of block by timestamp
-func recalculateStoreDifficulty(b *blockchain) int {
+func recalculateStoreDifficulty(b *storeBlockchain) int {
 	// get all blocks
 	allBlocks := StoreBlocks(b)
 	newestBlock := allBlocks[0]
@@ -101,7 +129,7 @@ func recalculateStoreDifficulty(b *blockchain) int {
 	return b.CurrentDifficulty
 }
 
-func getStoreDifficulty(b *blockchain) int {
+func getStoreDifficulty(b *storeBlockchain) int {
 	// if genesis block or not
 	if b.Height == 0 {
 		return defaultDifficulty

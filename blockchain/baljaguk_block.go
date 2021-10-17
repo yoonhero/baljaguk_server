@@ -32,7 +32,7 @@ type BaljagukData struct {
 // persist data
 func persistBaljagukBlock(b *BaljagukBlock) {
 	// db.SaveBlock(b.Hash, utils.ToBytes(b))
-	dbStorage.SaveBaljagukBlock(b.Hash, utils.ToBytes(b))
+	baljagukDBStorage.SaveBaljagukBlock(b.Hash, utils.ToBytes(b))
 }
 
 // mine the block
@@ -59,7 +59,7 @@ func (b *BaljagukBlock) restore(data []byte) {
 // find block by hash
 func FindBaljagukBlock(hash string) (*BaljagukBlock, error) {
 	// blockBytes := db.Block(hash)
-	blockBytes := dbStorage.FindBaljaguk(hash)
+	blockBytes := baljagukDBStorage.FindBaljaguk(hash)
 
 	// if that block don't exist
 	if blockBytes == nil {

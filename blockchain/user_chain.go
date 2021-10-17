@@ -1,14 +1,43 @@
 package blockchain
 
-import "github.com/yoonhero/baljaguk_server/utils"
+import (
+	"sync"
 
-// variable blockchain pointers
-var user_b *blockchain
+	"github.com/yoonhero/baljaguk_server/db"
+	"github.com/yoonhero/baljaguk_server/utils"
+)
 
-// add block to blockchain
-func (b *blockchain) AddUserBlock(Address string, PrivateKey string, PhoneNumber string, Email string) *UserBlock {
+var userDBStorage storage = db.DB{}
+
+// variable struct that play func only one time
+var userOnce sync.Once
+
+// type blockchain
+// blocks is slice of []Block
+type userBlockchain struct {
+	NewestHash        string `json:"newestHash"`
+	Height            int    `json:"height"`
+	CurrentDifficulty int    `json:"currentDifficulty"`
+	m                 sync.Mutex
+}
+
+func (b *userBlockchain) LockBlockchain() {
 	b.m.Lock()
 	defer b.m.Unlock()
+}
+
+func (b *userBlockchain) restore(data []byte) {
+	// decoder := gob.NewDecoder(bytes.NewReader(data))
+	// decoder.Decode(b)
+	utils.FromBytes(b, data)
+}
+
+// variable blockchain pointers
+var user_b *userBlockchain
+
+// add block to blockchain
+func (b *userBlockchain) AddUserBlock(Address string, PrivateKey string, PhoneNumber string, Email string) *UserBlock {
+	b.LockBlockchain()
 
 	data := UserData{
 		Address:     Address,
@@ -32,9 +61,8 @@ func (b *blockchain) AddUserBlock(Address string, PrivateKey string, PhoneNumber
 }
 
 // all blocks
-func UserBlocks(b *blockchain) []*UserBlock {
-	b.m.Lock()
-	defer b.m.Unlock()
+func UserBlocks(b *userBlockchain) []*UserBlock {
+	b.LockBlockchain()
 	var blocks []*UserBlock
 
 	// start newesthash and its prevhash and find block
@@ -54,20 +82,20 @@ func UserBlocks(b *blockchain) []*UserBlock {
 }
 
 // persist the blockchain data
-func persistUserBlockchain(b *blockchain) {
+func persistUserBlockchain(b *userBlockchain) {
 	// db.SaveCheckpoint(utils.ToBytes(b))
-	dbStorage.SaveUserChain((utils.ToBytes(b)))
+	userDBStorage.SaveUserChain((utils.ToBytes(b)))
 }
 
-func UserBlockchain() *blockchain {
+func UserBlockchain() *userBlockchain {
 	// run only one time
-	once.Do(func() {
+	userOnce.Do(func() {
 		// initial blockchain struct
-		user_b = &blockchain{Height: 0}
+		user_b = &userBlockchain{Height: 0}
 
 		// search for checkpoint on the db
 		// checkpoint := db.Checkpoint()
-		checkpoint := dbStorage.LoadUserChain()
+		checkpoint := userDBStorage.LoadUserChain()
 
 		if checkpoint == nil {
 			// if blockchain don't exist create block
@@ -82,7 +110,7 @@ func UserBlockchain() *blockchain {
 }
 
 // recalculate difficulty of block by timestamp
-func recalculateUserDifficulty(b *blockchain) int {
+func recalculateUserDifficulty(b *userBlockchain) int {
 	// get all blocks
 	allBlocks := UserBlocks(b)
 	newestBlock := allBlocks[0]
@@ -102,7 +130,7 @@ func recalculateUserDifficulty(b *blockchain) int {
 	return b.CurrentDifficulty
 }
 
-func getUserDifficulty(b *blockchain) int {
+func getUserDifficulty(b *userBlockchain) int {
 	// if genesis block or not
 	if b.Height == 0 {
 		return defaultDifficulty

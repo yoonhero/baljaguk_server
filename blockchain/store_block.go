@@ -1,7 +1,6 @@
 package blockchain
 
 import (
-	"fmt"
 	"strings"
 	"time"
 
@@ -30,7 +29,7 @@ type StoreData struct {
 // persist data
 func persistStoreBlock(b *StoreBlock) {
 	// db.SaveBlock(b.Hash, utils.ToBytes(b))
-	dbStorage.SaveStoreBlock(b.Hash, utils.ToBytes(b))
+	storeDBStorage.SaveStoreBlock(b.Hash, utils.ToBytes(b))
 }
 
 // mine the block
@@ -57,9 +56,7 @@ func (b *StoreBlock) restore(data []byte) {
 // find block by hash
 func FindStoreBlock(hash string) (*StoreBlock, error) {
 	// blockBytes := db.Block(hash)
-	blockBytes := dbStorage.FindStoreBlock(hash)
-
-	fmt.Println("...")
+	blockBytes := storeDBStorage.FindStoreBlock(hash)
 
 	// if that block don't exist
 	if blockBytes == nil {
@@ -75,21 +72,16 @@ func FindStoreBlock(hash string) (*StoreBlock, error) {
 }
 
 // find store by address
-func FindUserStoreByAddress(address string) ([]*StoreBlock, error) {
+func FindStoreBlockByAddress(address string) *StoreBlock {
 	blocks := StoreBlocks(StoreBlockchain())
-	var results []*StoreBlock
 
 	for _, block := range blocks {
 		if block.Address == address {
-			results = append(results, block)
+			return block
 		}
 	}
 
-	if len(results) == 0 {
-		return nil, ErrNotFound
-	}
-
-	return results, nil
+	return nil
 }
 
 // create block

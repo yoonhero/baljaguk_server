@@ -223,59 +223,13 @@ func baljagukBlocks(rw http.ResponseWriter, r *http.Request) {
 func findUser(rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	hash := vars["hash"]
-
-	// FindBlock by Hash
-	block, err := blockchain.FindUserBlockByAddress(hash)
-
-	encoder := json.NewEncoder(rw)
-
-	if err == blockchain.ErrNotFound {
-		// format err to string
-		encoder.Encode(errorResponse{fmt.Sprint(err)})
-	} else {
-		// send the block
-		encoder.Encode(block)
-	}
-
+	utils.HandleErr(json.NewEncoder(rw).Encode(blockchain.FindUserBlockByAddress(hash)))
 }
 
 func findStore(rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	hash := vars["hash"]
-
-	// FindBlock by Hash
-	block, err := blockchain.FindUserStoreByAddress(hash)
-
-	encoder := json.NewEncoder(rw)
-
-	if err == blockchain.ErrNotFound {
-		// format err to string
-		encoder.Encode(errorResponse{fmt.Sprint(err)})
-	} else {
-		// send the block
-		encoder.Encode(block)
-	}
-}
-
-// func add json content type
-func jsonContentTypeMiddleWare(next http.Handler) http.Handler {
-	// make a type of http.Handler
-	return http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
-		// add content json type
-		utils.AllowConnection(rw)
-		rw.Header().Add("Content-Type", "application/json")
-		// rw.Header().Add("Access-Control-Allow-Origin", "no-cors")
-		next.ServeHTTP(rw, r)
-	})
-}
-
-func loggerMiddleWare(next http.Handler) http.Handler {
-	// make a type of http.Handler
-	return http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
-		// add content json type
-		fmt.Println(r.URL)
-		next.ServeHTTP(rw, r)
-	})
+	utils.HandleErr(json.NewEncoder(rw).Encode(blockchain.FindStoreBlockByAddress(hash)))
 }
 
 func status(rw http.ResponseWriter, r *http.Request) {
@@ -294,6 +248,26 @@ func myWallet(rw http.ResponseWriter, r *http.Request) {
 func createKey(rw http.ResponseWriter, r *http.Request) {
 	address, key := wallet.RestApiCreatePrivKey()
 	utils.HandleErr(json.NewEncoder(rw).Encode(createKeyAddressPayload{address, fmt.Sprintf("%x", key)}))
+}
+
+// func add json content type
+func jsonContentTypeMiddleWare(next http.Handler) http.Handler {
+	// make a type of http.Handler
+	return http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
+		// add content json type
+		utils.AllowConnection(rw)
+		rw.Header().Add("Content-Type", "application/json")
+		next.ServeHTTP(rw, r)
+	})
+}
+
+func loggerMiddleWare(next http.Handler) http.Handler {
+	// make a type of http.Handler
+	return http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
+		// add content json type
+		fmt.Println(r.URL)
+		next.ServeHTTP(rw, r)
+	})
 }
 
 func Start(aPort int) {
