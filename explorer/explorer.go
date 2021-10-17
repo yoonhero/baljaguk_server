@@ -26,7 +26,7 @@ var templates *template.Template
 // Blocks are slice of blockchain.block
 type homeData struct {
 	PageTitle string
-	Blocks    []*blockchain.Block
+	Blocks    []*blockchain.BaljagukBlock
 }
 
 // when get or post from link "/"
@@ -75,7 +75,7 @@ func add(rw http.ResponseWriter, r *http.Request) {
 		// data := r.Form.Get("blockData")
 
 		// addblock data is data from r.Form.Get("blockchain")
-		blockchain.BaljagukBlockchain().AddBaljagukBlock("", "")
+		blockchain.BaljagukBlockchain().AddBaljagukBlock("", "", "", "")
 
 		// redirect http
 		// writer is http.ResponseWrite

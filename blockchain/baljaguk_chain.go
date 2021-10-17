@@ -30,8 +30,8 @@ func (b *blockchain) AddBaljagukBlock(StoreHash string, UserHash string, Latitud
 
 // all blocks
 func BaljagukBlocks(b *blockchain) []*BaljagukBlock {
-	b.m.Lock()
-	defer b.m.Unlock()
+	// b.m.Lock()
+	// defer b.m.Unlock()
 	var blocks []*BaljagukBlock
 
 	// start newesthash and its prevhash and find block

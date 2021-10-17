@@ -30,8 +30,8 @@ func (b *blockchain) AddUserBlock(Address string, PrivateKey string, PhoneNumber
 
 // all blocks
 func UserBlocks(b *blockchain) []*UserBlock {
-	b.m.Lock()
-	defer b.m.Unlock()
+	// b.m.Lock()
+	// defer b.m.Unlock()
 	var blocks []*UserBlock
 
 	// start newesthash and its prevhash and find block

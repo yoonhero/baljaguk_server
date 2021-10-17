@@ -193,6 +193,7 @@ func findStoreBlockInSQL(hash string) []byte {
 	var data []byte
 
 	err := sqlDB.QueryRow("SELECT Data FROM StoreBlocks WHERE Hash = $1", hash).Scan(&data)
+
 	utils.HandleErr(err)
 
 	return data

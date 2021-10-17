@@ -29,8 +29,8 @@ func (b *blockchain) AddStoreBlock(Address string, PrivateKey string, PhoneNumbe
 
 // all blocks
 func StoreBlocks(b *blockchain) []*StoreBlock {
-	b.m.Lock()
-	defer b.m.Unlock()
+	// b.m.Lock()
+	// defer b.m.Unlock()
 	var blocks []*StoreBlock
 
 	// start newesthash and its prevhash and find block
