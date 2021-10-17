@@ -1,6 +1,7 @@
 package blockchain
 
 import (
+	"fmt"
 	"strings"
 	"time"
 
@@ -57,6 +58,8 @@ func (b *StoreBlock) restore(data []byte) {
 func FindStoreBlock(hash string) (*StoreBlock, error) {
 	// blockBytes := db.Block(hash)
 	blockBytes := dbStorage.FindStoreBlock(hash)
+
+	fmt.Println("...")
 
 	// if that block don't exist
 	if blockBytes == nil {
