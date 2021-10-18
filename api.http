@@ -17,6 +17,15 @@ POST http://localhost:4000/storeblock
 }
 
 ###
+POST https://baljaguk.herokuapp.com/storeblocks
+
+{
+  "address":"a7364d71333eda588f3bddc3accefe7f8844d0529077b1b431930d712510bfdae9d6a92035b506b2e612ac1944aa64a2475b857fc50a36f8a9e8fa4ad0ed9ca1",
+  "privateKey":"307702010104209bd3fdb53dcb0795b7e02e70e0a238d74380c5da8e62a34178b80ba5ac07749ba00a06082a8648ce3d030107a14403420004a7364d71333eda588f3bddc3accefe7f8844d0529077b1b431930d712510bfdae9d6a92035b506b2e612ac1944aa64a2475b857fc50a36f8a9e8fa4ad0ed9ca1",
+  "phoneNumber":"1234-5678-91011"
+}
+
+###
 POST http://localhost:4000/baljaguks
 
 {
@@ -26,6 +35,15 @@ POST http://localhost:4000/baljaguks
   "longitude":"127.074224"
 }
 
+###
+POST https://baljaguk.herokuapp.com/baljaguks
+
+{
+  "userhash":"73d5a4527a5cd1cf4f54814e089ee98a8bd8419ba422a4557f831f7da8256adbb2526650e529813726714b051bcc5a99c3d5f5d8210303825139969959ed532f",
+  "storehash":"a7364d71333eda588f3bddc3accefe7f8844d0529077b1b431930d712510bfdae9d6a92035b506b2e612ac1944aa64a2475b857fc50a36f8a9e8fa4ad0ed9ca1",
+  "latitude":"37.201034",
+  "longitude":"127.072147"
+}
 
 ###
 http://localhost:4000/createkey
